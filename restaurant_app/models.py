@@ -70,6 +70,10 @@ class Clients(models.Model):
     description = models.CharField(max_length=4000,blank=False,default='description Chef')
     image = models.ImageField(upload_to='chef/',default='media/defa/client.png')
     message =models.CharField(max_length=255,blank=False,default='Chef')
+    date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-date']
 
     def __str__(self):
         return self.name
@@ -81,6 +85,19 @@ class Chefs(models.Model):
     facebook = models.URLField(max_length=500, blank=True, default='', help_text="URL to the chef's Facebook profile")
     instagram = models.URLField(max_length=500, blank=True, default='', help_text="URL to the chef's Instagram profile")
     twitter = models.URLField(max_length=500, blank=True, default='', help_text="URL to the chef's Twitter profile")
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        
+        # Resize the image
+        if self.image:
+            img_path = self.image.path
+            with Image.open(img_path) as img:
+                if img.height > 400 or img.width > 400:  # Adjust dimensions as needed
+                    output_size = (400, 400)
+                    img = img.resize(output_size, Image.Resampling.LANCZOS)
+                    img.save(img_path)
+
 
     def __str__(self):
         return self.name
