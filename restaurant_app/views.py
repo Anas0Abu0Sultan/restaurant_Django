@@ -4,7 +4,12 @@ from django.shortcuts import get_object_or_404
 
 def test(request):
     services = Services.objects.all()
-    return render(request, 'test.html',{'services':services})
+    return render(request, 'restaurant/navbar_other.html',{'services':services})
+
+
+
+
+
 
 def home(request):
     rest_detail = get_object_or_404(Rest_detail,pk =1)
@@ -42,8 +47,11 @@ def about(request):
     context = {
         'about_us': about_us,
         'about_us_images': about_us_images,
+        'page_title': 'About Us',
+        'breadcrumb_section': 'Pages',
+        'breadcrumb_active': 'About',
         }
-    return render(request,'about.html',context)
+    return render(request,'restaurant/about.html',context)
 
 def service(request):
     services = Services.objects.all()
