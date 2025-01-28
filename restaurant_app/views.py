@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .models import AboutUs, AboutUsImage, Rest_detail,Services,Drinks,Meals,Sandwiches,Grills,Sweets,Salads,Chefs,Clients
 from django.shortcuts import get_object_or_404
+from django.core.paginator import Paginator
 
 def test(request):
     services = Services.objects.all()
@@ -44,14 +45,25 @@ def home(request):
 def about(request):
     about_us = AboutUs.objects.first()
     about_us_images = AboutUsImage.objects.filter(about_us=about_us) if about_us else None
+    chefs_list = Chefs.objects.all()
+    paginator = Paginator(chefs_list,8)
+    page_number = request.GET.get('page')
+    chefs  = paginator.get_page(page_number)
+
     context = {
         'about_us': about_us,
         'about_us_images': about_us_images,
         'page_title': 'About Us',
         'breadcrumb_section': 'Pages',
         'breadcrumb_active': 'About',
+        'chefs':chefs,
         }
     return render(request,'restaurant/about.html',context)
+
+
+
+
+
 
 def service(request):
     services = Services.objects.all()
