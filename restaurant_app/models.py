@@ -16,6 +16,7 @@ class Food(models.Model):
     last_price = models.DecimalField(max_digits=5, decimal_places=2,default=price)
     size = models.CharField(max_length=2,choices=Size.choices,default=Size.SMALL)
     image = models.ImageField(upload_to=upload_to_dynamic,default='media/defa/defa.png')
+    description = models.CharField(max_length=255,blank=False,default='description')
 
     class Meta:
         abstract = True 

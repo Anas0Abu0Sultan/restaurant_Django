@@ -54,8 +54,9 @@ def about(request):
         'about_us': about_us,
         'about_us_images': about_us_images,
         'page_title': 'About Us',
-        'breadcrumb_section': 'Pages',
+        'breadcrumb_section': 'Services',
         'breadcrumb_active': 'About',
+        'about':'active',
         'chefs':chefs,
         }
     return render(request,'restaurant/about.html',context)
@@ -69,8 +70,14 @@ def service(request):
     services = Services.objects.all()
     context = {
         'services': services,
+        'service':'active',
+        'page_title': 'Services',
+        'breadcrumb_section': 'About',
+        'breadcrumb_active': 'Services',
         }
-    return render(request,'services.html',context)
+    return render(request,'restaurant/services.html',context)
+
+
 
 
 def menu(request):
@@ -80,6 +87,7 @@ def menu(request):
     grills = Grills.objects.all()
     sweets = Sweets.objects.all()
     salads = Salads.objects.all()
+
     context = {
         'drinks': drinks,
         'meals': meals,
@@ -89,6 +97,10 @@ def menu(request):
         'salads': salads,
         }
     return render(request,'menu.html',context)
+
+
+
+
 
 def testimonial(request):
     clients = Clients.objects.all()
