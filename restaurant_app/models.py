@@ -15,9 +15,9 @@ class Food(models.Model):
     price = models.DecimalField(max_digits=5, decimal_places=2,default=0.0)
     last_price = models.DecimalField(max_digits=5, decimal_places=2,default=price)
     size = models.CharField(max_length=2,choices=Size.choices,default=Size.SMALL)
-    image = models.ImageField(upload_to=upload_to_dynamic,default='media/defa/defa.png')
+    image = models.ImageField(upload_to=upload_to_dynamic,default='defa/defa.png')
     description = models.CharField(max_length=255,blank=False,default='description')
-
+    category = models.CharField(max_length=250,blank=False,default='drinks')
     class Meta:
         abstract = True 
 
@@ -53,7 +53,7 @@ class Rest_detail(models.Model):
     address = models.CharField(max_length=255,blank=False,default='address')
     phone_number = models.CharField(max_length=20,blank=False,default='phone_number')
     email = models.EmailField(max_length=255,blank=False,default='email')
-    image = models.ImageField(upload_to='restaurant/',default='media/defa/defa.png')
+    image = models.ImageField(upload_to='restaurant/',default='defa/defa.png')
 
     def __str__(self):
         return f"{self.name}"
@@ -69,7 +69,7 @@ class Salads(Food):
 class Clients(models.Model):
     name = models.CharField(max_length=255,blank=False,default='Chef')
     description = models.CharField(max_length=4000,blank=False,default='description Chef')
-    image = models.ImageField(upload_to='chef/',default='media/defa/client.png')
+    image = models.ImageField(upload_to='chef/',default='defa/client.png')
     message =models.CharField(max_length=255,blank=False,default='Chef')
     date = models.DateTimeField(auto_now_add=True)
 
@@ -82,7 +82,7 @@ class Clients(models.Model):
 class Chefs(models.Model):
     name = models.CharField(max_length=255,blank=False,default='Chef')
     description = models.CharField(max_length=4000,blank=False,default='description Chef')
-    image = models.ImageField(upload_to='chef/',default='media/defa/chef.jpg')
+    image = models.ImageField(upload_to='chef/',default='defa/chef.jpg')
     facebook = models.URLField(max_length=500, blank=True, default='', help_text="URL to the chef's Facebook profile")
     instagram = models.URLField(max_length=500, blank=True, default='', help_text="URL to the chef's Instagram profile")
     twitter = models.URLField(max_length=500, blank=True, default='', help_text="URL to the chef's Twitter profile")
@@ -107,7 +107,8 @@ class Chefs(models.Model):
 class Services(models.Model):
     name = models.CharField(max_length=50, blank=False, default='Service')
     description = models.CharField(max_length=2500,blank=False,default='description of services')
-    icon = models.ImageField(upload_to='icons/')
+    icon = models.ImageField(upload_to='icons/',default='defa/client.png')
+    text_icon = models.CharField(max_length=2500,default='fa fa-3x fa-cart-plus text-primary mb-4')
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
