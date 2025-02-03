@@ -80,24 +80,58 @@ def service(request):
 
 
 
-def menu(request):
-    drinks = Drinks.objects.all()
-    meals = Meals.objects.all()
-    sandwiches = Sandwiches.objects.all()
-    grills = Grills.objects.all()
-    sweets = Sweets.objects.all()
-    salads = Salads.objects.all()
+# def menu(request):
+#     drinks = Drinks.objects.all()
+#     meals = Meals.objects.all()
+#     sandwiches = Sandwiches.objects.all()
+#     grills = Grills.objects.all()
+#     sweets = Sweets.objects.all()
+#     salads = Salads.objects.all()
+
+#     context = {
+#         'menu':'active',
+#         'page_title': 'Food Menu',
+#         'breadcrumb_section': 'About',
+#         'breadcrumb_active': 'Menu',
+#         'drinks': drinks,
+#         'meals': meals,
+#         'sandwiches': sandwiches,
+#         'grills': grills,
+#         'sweets': sweets,
+#         'salads': salads,
+#         }
+#     return render(request,'restaurant/menu.html',context)
+
+
+
+def menu(request, category):
+
+        # Filter menu items based on the selected category
+    if category == 'drinks':
+        items = Drinks.objects.all()
+    elif category == 'meals':
+        items = Meals.objects.all()
+    elif category == 'sandwiches':
+        items = Sandwiches.objects.all()
+    elif category == 'grills':
+        items = Grills.objects.all()
+    elif category == 'sweets':
+        items = Sweets.objects.all()
+    elif category == 'salads':
+        items = Salads.objects.all()
+    else:
+        items = []
+
 
     context = {
-        'drinks': drinks,
-        'meals': meals,
-        'sandwiches': sandwiches,
-        'grills': grills,
-        'sweets': sweets,
-        'salads': salads,
+        'menu':'active',
+        'page_title': 'Food Menu',
+        'breadcrumb_section': 'About',
+        'breadcrumb_active': 'Menu',
+        'items': items,
+        'category': category,
         }
-    return render(request,'menu.html',context)
-
+    return render(request,'restaurant/menu.html',context)
 
 
 
