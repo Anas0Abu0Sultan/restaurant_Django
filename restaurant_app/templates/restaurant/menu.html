@@ -1,8 +1,8 @@
 {% extends 'restaurant/base_other.html' %}
 
 {% block content %}
-    <!-- Menu Content Section (only the menu items should be here) -->
-    <div class="container-xxl py-5">
+      <!-- Menu Start -->
+      <div class="container-xxl py-5">
         <div class="container">
             <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
                 <h5 class="section-title ff-secondary text-center text-primary fw-normal">Food Menu</h5>
@@ -13,7 +13,7 @@
             <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.1s">
                 <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5">
                     <li class="nav-item">
-                        <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3" href="#" hx-get="{% url 'menu' 'drinks' %}" hx-target="#menu-content">
+                        <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3" href="#" >
                             <i class="fa fa-coffee fa-2x text-primary"></i>
                             <div class="ps-3">
                                 <small class="text-body">Refreshing</small>
@@ -22,7 +22,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="d-flex align-items-center text-start mx-3 pb-3" href="#" hx-get="{% url 'menu' 'meals' %}" hx-target="#menu-content">
+                        <a class="d-flex align-items-center text-start mx-3 pb-3" href="#" >
                             <i class="fa fa-hamburger fa-2x text-primary"></i>
                             <div class="ps-3">
                                 <small class="text-body">Hearty</small>
@@ -30,28 +30,55 @@
                             </div>
                         </a>
                     </li>
-                    <!-- More tabs here -->
+                    <li class="nav-item">
+                        <a class="d-flex align-items-center text-start mx-3 pb-3" href="#">
+                            <i class="fa fa-bread-slice fa-2x text-primary"></i>
+                            <div class="ps-3">
+                                <small class="text-body">Tasty</small>
+                                <h6 class="mt-n1 mb-0">Sandwiches</h6>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="d-flex align-items-center text-start mx-3 pb-3" href="#" >
+                            <i class="fa fa-fire fa-2x text-primary"></i>
+                            <div class="ps-3">
+                                <small class="text-body">Grilled</small>
+                                <h6 class="mt-n1 mb-0">Grills</h6>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="d-flex align-items-center text-start mx-3 pb-3" href="#" >
+                            <i class="fa fa-ice-cream fa-2x text-primary"></i>
+                            <div class="ps-3">
+                                <small class="text-body">Sweet</small>
+                                <h6 class="mt-n1 mb-0">Sweets</h6>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        {% comment %} <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" href="#" hx-get="{% url 'menu' 'salads' %}" hx-target="#menu-content"> {% endcomment %}
+                        <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" href="#">
+
+                            <i class="fa fa-leaf fa-2x text-primary"></i>
+                            <div class="ps-3">
+                                <small class="text-body">Healthy</small>
+                                <h6 class="mt-n1 mb-0">Salads</h6>
+                            </div>
+                        </a>
+                    </li>
                 </ul>
             </div>
 
-            <!-- Menu Content (this section will be replaced by HTMX) -->
+            <!-- Menu Content -->
             <div id="menu-content">
-                <!-- Content will be dynamically loaded here -->
-                {% for item in items %}
-                    <div class="col-lg-6">
-                        <div class="d-flex align-items-center">
-                            <img class="flex-shrink-0 img-fluid rounded" src="{{ item.image_url }}" alt="" style="width: 80px;">
-                            <div class="w-100 d-flex flex-column text-start ps-4">
-                                <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                    <span>{{ item.name }}</span>
-                                    <span class="text-primary">${{ item.price }}</span>
-                                </h5>
-                                <small class="fst-italic">{{ item.description }}</small>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
+                <!-- Content will be loaded dynamically based on the selected tab -->
             </div>
         </div>
     </div>
+    <!-- Menu End -->
+
+
+        
 {% endblock %}
