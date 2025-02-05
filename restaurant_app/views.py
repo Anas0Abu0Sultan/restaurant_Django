@@ -107,22 +107,34 @@ def service(request):
 def menu(request, category):
 
         # Filter menu items based on the selected category
+    items = []
     if category == 'drinks':
         items = Drinks.objects.all()
+        name_page = 'Drinks'
     elif category == 'meals':
         items = Meals.objects.all()
+        name_page = 'Meals'
     elif category == 'sandwiches':
         items = Sandwiches.objects.all()
+        name_page = 'Sandwiches'
     elif category == 'grills':
         items = Grills.objects.all()
+        name_page = 'Grills'
     elif category == 'sweets':
         items = Sweets.objects.all()
+        name_page = 'Sweets'
     elif category == 'salads':
         items = Salads.objects.all()
+        name_page = 'Salads'
     else:
         items = []
+    
+    half = len(items) // 2
+    first_half = items[:half]
+    second_half = items[half:]
 
 
+    
     context = {
         'menu':'active',
         'page_title': 'Food Menu',
@@ -130,6 +142,8 @@ def menu(request, category):
         'breadcrumb_active': 'Menu',
         'items': items,
         'category': category,
+        'first_half': first_half,
+        'second_half': second_half,
         }
     return render(request,'restaurant/menu.html',context)
 

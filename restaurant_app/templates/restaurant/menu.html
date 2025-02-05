@@ -13,7 +13,7 @@
             <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.1s">
                 <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5">
                     <li class="nav-item">
-                        <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3" href="#" >
+                        <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3" href="{% url 'menu'  'drinks' %}" >
                             <i class="fa fa-coffee fa-2x text-primary"></i>
                             <div class="ps-3">
                                 <small class="text-body">Refreshing</small>
@@ -49,7 +49,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="d-flex align-items-center text-start mx-3 pb-3" href="#" >
+                        <a class="d-flex align-items-center text-start mx-3 pb-3" href="{% url 'menu'  'sweets' %}" >
                             <i class="fa fa-ice-cream fa-2x text-primary"></i>
                             <div class="ps-3">
                                 <small class="text-body">Sweet</small>
@@ -59,7 +59,7 @@
                     </li>
                     <li class="nav-item">
                         {% comment %} <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" href="#" hx-get="{% url 'menu' 'salads' %}" hx-target="#menu-content"> {% endcomment %}
-                        <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" href="#">
+                        <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" href="{% url 'menu'  'salads' %}">
 
                             <i class="fa fa-leaf fa-2x text-primary"></i>
                             <div class="ps-3">
@@ -71,14 +71,71 @@
                 </ul>
             </div>
 
-            <!-- Menu Content -->
-            <div id="menu-content">
-                <!-- Content will be loaded dynamically based on the selected tab -->
+           <!-- menu_content.html -->
+
+
+{% comment %} 
+<div id="menu-content">
+    {% for item in items %}
+        <div class="col-lg-6">
+            <div class="d-flex align-items-center">
+                <img class="flex-shrink-0 img-fluid rounded" src="{{ item.image.url }}" alt="" style="width: 80px;">
+                <div class="w-100 d-flex flex-column text-start ps-4">
+                    <h5 class="d-flex justify-content-between border-bottom pb-2">
+                        <span>{{ item.name }}</span>
+                        <span class="text-primary">${{ item.price }}</span>
+                    </h5>
+                    <small class="fst-italic">{{ item.description }}</small>
+                </div>
             </div>
+        </div>
+    {% endfor %}
+</div>
         </div>
     </div>
     <!-- Menu End -->
 
 
+         {% endcomment %}
+
+
+
+         <div id="menu-content" class="row g-4">
+            <!-- Left Column (First Half of Items) -->
+            <div class="col-lg-6">
+                {% for item in first_half %}
+                <div class="d-flex align-items-center mb-4">
+                    <img class="flex-shrink-0 img-fluid rounded" src="{{ item.image.url }}" alt="{{ item.name }}" style="width: 80px;">
+                    <div class="w-100 d-flex flex-column text-start ps-4">
+                        <h5 class="d-flex justify-content-between border-bottom pb-2">
+                            <span>{{ item.name }}</span>
+                            <span class="text-primary">${{ item.price }}</span>
+                        </h5>
+                        <small class="fst-italic">{{ item.description }}</small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
         
+            <!-- Right Column (Second Half of Items) -->
+            <div class="col-lg-6">
+                {% for item in second_half %}
+                <div class="d-flex align-items-center mb-4">
+                    <img class="flex-shrink-0 img-fluid rounded" src="{{ item.image.url }}" alt="{{ item.name }}" style="width: 80px;">
+                    <div class="w-100 d-flex flex-column text-start ps-4">
+                        <h5 class="d-flex justify-content-between border-bottom pb-2">
+                            <span>{{ item.name }}</span>
+                            <span class="text-primary">${{ item.price }}</span>
+                        </h5>
+                        <small class="fst-italic">{{ item.description }}</small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+
+
+
+
 {% endblock %}
