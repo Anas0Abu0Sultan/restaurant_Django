@@ -2,6 +2,8 @@ from django.shortcuts import render
 from .models import AboutUs, AboutUsImage, Rest_detail,Services,Drinks,Meals,Sandwiches,Grills,Sweets,Salads,Chefs,Clients
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
+from django.db.models import QuerySet
+
 
 def test(request):
     services = Services.objects.all()
@@ -107,28 +109,29 @@ def service(request):
 def menu(request, category):
 
         # Filter menu items based on the selected category
-    items = []
     if category == 'drinks':
-        items = Drinks.objects.all()
+        items = Drinks.objects.all().order_by('-price')
         name_page = 'Drinks'
     elif category == 'meals':
-        items = Meals.objects.all()
+        items = Meals.objects.all().order_by('-price')
         name_page = 'Meals'
     elif category == 'sandwiches':
-        items = Sandwiches.objects.all()
+        items = Sandwiches.objects.all().order_by('-price')
         name_page = 'Sandwiches'
     elif category == 'grills':
-        items = Grills.objects.all()
+        items = Grills.objects.all().order_by('-price')
         name_page = 'Grills'
     elif category == 'sweets':
-        items = Sweets.objects.all()
+        items = Sweets.objects.all().order_by('-price')
         name_page = 'Sweets'
     elif category == 'salads':
-        items = Salads.objects.all()
+        items = Salads.objects.all().order_by('-price')
         name_page = 'Salads'
     else:
         items = []
-    
+        name_page = 'Most Popular Items'
+
+    # half = items.count // 2
     half = len(items) // 2
     first_half = items[:half]
     second_half = items[half:]
@@ -144,6 +147,7 @@ def menu(request, category):
         'category': category,
         'first_half': first_half,
         'second_half': second_half,
+        'name_page': name_page,
         }
     return render(request,'restaurant/menu.html',context)
 
