@@ -17,7 +17,7 @@ class Food(models.Model):
     size = models.CharField(max_length=2,choices=Size.choices,default=Size.SMALL)
     image = models.ImageField(upload_to=upload_to_dynamic,default='defa/defa.png')
     description = models.CharField(max_length=255,blank=False,default='description')
-    category = models.CharField(max_length=250,blank=False,default='drinks')
+    category = models.CharField(max_length=250,blank=False,default='food_menu')
     class Meta:
         abstract = True 
 

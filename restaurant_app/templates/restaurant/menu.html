@@ -6,23 +6,24 @@
         <div class="container">
             <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
                 <h5 class="section-title ff-secondary text-center text-primary fw-normal">Food Menu</h5>
-                <h1 class="mb-5">Most Popular Items</h1>
-            </div>
+                <h1 class="mb-5">{{ name_page|default:"Most Popular Items" }}</h1>
+                        </div>
 
             <!-- Tab Navigation -->
             <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.1s">
                 <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5">
                     <li class="nav-item">
-                        <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3" href="{% url 'menu'  'drinks' %}" >
-                            <i class="fa fa-coffee fa-2x text-primary"></i>
-                            <div class="ps-3">
-                                <small class="text-body">Refreshing</small>
-                                <h6 class="mt-n1 mb-0">Drinks</h6>
-                            </div>
-                        </a>
+                        <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 {% if category == 'drinks' %}active{% endif %}" href="{% url 'menu' 'drinks' %}">
+    <i class="fa fa-coffee fa-2x text-primary"></i>
+    <div class="ps-3">
+        <small class="text-body">Refreshing</small>
+        <h6 class="mt-n1 mb-0">Drinks</h6>
+    </div>
+</a>
+
                     </li>
                     <li class="nav-item">
-                        <a class="d-flex align-items-center text-start mx-3 pb-3" href="#" >
+                        <a class="d-flex align-items-center text-start mx-3 pb-3 {% if category == 'meals' %}active{% endif %}" href="{% url 'menu'  'meals' %}" >
                             <i class="fa fa-hamburger fa-2x text-primary"></i>
                             <div class="ps-3">
                                 <small class="text-body">Hearty</small>
@@ -31,7 +32,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="d-flex align-items-center text-start mx-3 pb-3" href="#">
+                        <a class="d-flex align-items-center text-start mx-3 pb-3 {% if category == 'sandwiches' %}active{% endif %}" href="{% url 'menu'  'sandwiches' %}">
                             <i class="fa fa-bread-slice fa-2x text-primary"></i>
                             <div class="ps-3">
                                 <small class="text-body">Tasty</small>
@@ -40,7 +41,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="d-flex align-items-center text-start mx-3 pb-3" href="#" >
+                        <a class="d-flex align-items-center text-start mx-3 pb-3 {% if category == 'grills' %}active{% endif %}" href="{% url 'menu'  'grills' %}" >
                             <i class="fa fa-fire fa-2x text-primary"></i>
                             <div class="ps-3">
                                 <small class="text-body">Grilled</small>
@@ -49,7 +50,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="d-flex align-items-center text-start mx-3 pb-3" href="{% url 'menu'  'sweets' %}" >
+                        <a class="d-flex align-items-center text-start mx-3 pb-3 {% if category == 'sweets' %}active{% endif %}" href="{% url 'menu'  'sweets' %}" >
                             <i class="fa fa-ice-cream fa-2x text-primary"></i>
                             <div class="ps-3">
                                 <small class="text-body">Sweet</small>
@@ -59,7 +60,7 @@
                     </li>
                     <li class="nav-item">
                         {% comment %} <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" href="#" hx-get="{% url 'menu' 'salads' %}" hx-target="#menu-content"> {% endcomment %}
-                        <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" href="{% url 'menu'  'salads' %}">
+                        <a class="d-flex align-items-center text-start mx-3 me-0 pb-3 {% if category == 'salads' %}active{% endif %}" href="{% url 'menu'  'salads' %}">
 
                             <i class="fa fa-leaf fa-2x text-primary"></i>
                             <div class="ps-3">
