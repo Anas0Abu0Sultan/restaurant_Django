@@ -105,36 +105,52 @@ def service(request):
 #     return render(request,'restaurant/menu.html',context)
 
 
-
+from itertools import chain
+from random import shuffle
 def menu(request, category):
+
+    drinks = Drinks.objects.all().order_by('-price')
+    meals = Meals.objects.all().order_by('-price')
+    sandwiches = Sandwiches.objects.all().order_by('-price')
+    grills = Grills.objects.all().order_by('-price')
+    sweets = Sweets.objects.all().order_by('-price')
+    salads = Salads.objects.all().order_by('-price')
 
         # Filter menu items based on the selected category
     if category == 'drinks':
-        items = Drinks.objects.all().order_by('-price')
+        items = drinks
         name_page = 'Drinks'
     elif category == 'meals':
-        items = Meals.objects.all().order_by('-price')
+        items = meals
         name_page = 'Meals'
     elif category == 'sandwiches':
-        items = Sandwiches.objects.all().order_by('-price')
+        items = sandwiches
         name_page = 'Sandwiches'
     elif category == 'grills':
-        items = Grills.objects.all().order_by('-price')
+        items = grills
         name_page = 'Grills'
     elif category == 'sweets':
-        items = Sweets.objects.all().order_by('-price')
+        items = sweets
         name_page = 'Sweets'
     elif category == 'salads':
-        items = Salads.objects.all().order_by('-price')
+        items = salads
         name_page = 'Salads'
     else:
-        items = []
+        # Combine all categories using chain and shuffle the items
+        combined_items = list(chain(drinks, meals, sandwiches, grills, sweets, salads))
+        shuffle(combined_items)  # Shuffle the combined items
+        items = combined_items[:10]  # Get 10 random items
         name_page = 'Most Popular Items'
 
-    # half = items.count // 2
-    half = len(items) // 2
-    first_half = items[:half]
-    second_half = items[half:]
+    # Ensure there are items before slicing
+    if items:
+        half = len(items) // 2
+        first_half = items[:half]
+        second_half = items[half:]
+    else:
+        first_half = []
+        second_half = []
+
 
 
     
