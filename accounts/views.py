@@ -14,4 +14,4 @@ class CustomLoginView(LoginView):
     form_class = CustomAuthenticationForm
     template_name = 'accounts/login.html'
     success_url = reverse_lazy('restaurant_app:home')
-    redirect_authenticated_user = True
+    # redirect_authenticated_user = True
