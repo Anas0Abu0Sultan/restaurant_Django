@@ -1,8 +1,14 @@
 from django.shortcuts import render
-from .models import AboutUs, AboutUsImage, Rest_detail,Services,Drinks,Meals,Sandwiches,Grills,Sweets,Salads,Chefs,Clients
+from .models import AboutUs, AboutUsImage, Rest_detail,Services,Drinks,Meals,Sandwiches,Grills,Sweets,Salads,Chefs,Clients,Contact
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from django.db.models import QuerySet
+
+
+from django.core.mail import send_mail
+from django.shortcuts import render, redirect
+from .forms import ContactForm
+from django.contrib import messages
 
 
 def test(request):
@@ -82,27 +88,6 @@ def service(request):
 
 
 
-# def menu(request):
-#     drinks = Drinks.objects.all()
-#     meals = Meals.objects.all()
-#     sandwiches = Sandwiches.objects.all()
-#     grills = Grills.objects.all()
-#     sweets = Sweets.objects.all()
-#     salads = Salads.objects.all()
-
-#     context = {
-#         'menu':'active',
-#         'page_title': 'Food Menu',
-#         'breadcrumb_section': 'About',
-#         'breadcrumb_active': 'Menu',
-#         'drinks': drinks,
-#         'meals': meals,
-#         'sandwiches': sandwiches,
-#         'grills': grills,
-#         'sweets': sweets,
-#         'salads': salads,
-#         }
-#     return render(request,'restaurant/menu.html',context)
 
 
 from itertools import chain
@@ -187,8 +172,50 @@ def our_team(request):
 
 
 
+
 def contact(request):
-    pass
+    form = ContactForm()
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            subject = form.cleaned_data['subject']
+            message = form.cleaned_data['message']
+            
+            if name and email and subject and message:
+             email_subject = f"Contact Form: {subject}"
+             email_message = f"Name: {name}\nEmail: {email}\n\nMessage:\n{message}"
+            
+            # Send the email
+            try:
+                send_mail(
+                    email_subject,
+                    email_message,
+                    'anas227sultan@gmail.com',  # Replace with your sender email
+                    [email]  # Replace with recipient email
+                )
+                messages.success(request, "Your message has been sent successfully!")
+            except Exception as e:
+                messages.error(request, "Failed to send your message. Please try again later.")
+        else:
+            messages.error(request, "All fields are required.")
+
+
+    contact_emails = get_object_or_404(Contact,pk=1)
+    context={
+        'contact_emails':contact_emails,
+        'contact':'active',
+        'page_title': 'Contact Us',
+        'breadcrumb_section': 'About',
+        'breadcrumb_active': 'Menu',
+        'form': form,
+    
+    }
+    
+    return render(request, 'restaurant/contact.html', context)
+
+
 
 def booking(request):
     pass

@@ -1,7 +1,8 @@
 from django.contrib import admin
-from .models import Drinks,Grills,Meals,Rest_detail,Sandwiches,Sweets,Salads,Clients,Chefs,Services,AboutUs, AboutUsImage
+from .models import Drinks,Grills,Meals,Rest_detail,Sandwiches,Sweets,Salads,Clients,Chefs,Services,AboutUs, AboutUsImage, Contact
 
 admin.site.register(Rest_detail)
+admin.site.register(Contact)
 
 @admin.register(Drinks)
 class DrinksAdmin(admin.ModelAdmin):

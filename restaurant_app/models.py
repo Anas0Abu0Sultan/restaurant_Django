@@ -132,3 +132,9 @@ class AboutUs(models.Model):
 class AboutUsImage(models.Model):
     about_us = models.ForeignKey(AboutUs, on_delete=models.CASCADE, related_name="images")
     image = models.ImageField(upload_to="about_us_images/")
+
+
+class Contact(models.Model):
+    booking_email = models.EmailField(default='anas227sultan@gmail.com')
+    general_email = models.EmailField(default='anas227sultan@gmail.com')
+    technical_email = models.EmailField(default='anas227sultan@gmail.com')
