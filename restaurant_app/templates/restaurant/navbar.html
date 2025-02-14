@@ -10,10 +10,10 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav ms-auto py-0 pe-4">
-                        <a href="{%url 'home'%}" class="nav-item nav-link active">Home</a>
-                        <a href="{%url 'about' %}" class="nav-item nav-link">About</a>
-                        <a href="{%url 'services'%}" class="nav-item nav-link">Service</a>
-                        <a href="{% url 'menu' category='food_menu' %}" class="nav-item nav-link {{ menu|default:'' }}">Menu</a>
+                        <a href="{%url 'restaurant_app:home'%}" class="nav-item nav-link active">Home</a>
+                        <a href="{%url 'restaurant_app:about' %}" class="nav-item nav-link">About</a>
+                        <a href="{%url 'restaurant_app:services'%}" class="nav-item nav-link">Service</a>
+                        <a href="{% url 'restaurant_app:menu' category='food_menu' %}" class="nav-item nav-link {{ menu|default:'' }}">Menu</a>
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                             <div class="dropdown-menu m-0">
@@ -22,9 +22,22 @@
                                 <a href="testimonial.html" class="dropdown-item">Testimonial</a>
                             </div>
                         </div>
-                        <a href="{%url 'contact'%}" class="nav-item nav-link {{ contact|default:'' }}">Contact</a>
+                        <a href="{%url 'restaurant_app:contact'%}" class="nav-item nav-link {{ contact|default:'' }}">Contact</a>
                     </div>
                     <a href="" class="btn btn-primary py-2 px-4">Book A Table</a>
+                    {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'accounts:logout' %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="dropdown-item text-danger d-flex align-items-center">
+                            <i class="fas fa-sign-out-alt me-2"></i> Logout
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" class="btn btn-primary d-flex align-items-center py-1 px-3">
+                        <i class="fas fa-sign-in-alt me-2"></i> Login
+                    </a>
+                {% endif %}
+                
                 </div>
             </nav>
 

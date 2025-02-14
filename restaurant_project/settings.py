@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'restaurant_app.apps.RestaurantAppConfig',
     'accounts.apps.AccountsConfig',
-    # 'social_django',
+    'social_django',
     # 'django.contrib.sites',
     # 'allauth',
     # 'allauth.account',
@@ -69,7 +69,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'social_django.middleware.SocialAuthExceptionMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware', #this
 ]
 
 ROOT_URLCONF = 'restaurant_project.urls'
@@ -93,6 +93,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'restaurant_project.wsgi.application'
 
 
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -166,3 +170,14 @@ EMAIL_HOST_USER = 'anas227sultan@gmail.com'  # Your email address
 EMAIL_HOST_PASSWORD = 'nedx uhat jela sgju'     # Your email password or app password
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+
+# Social Auth settings
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '426123218672-7h1sftlhpkvqa4b4dad0mitecacb9m13.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/accounts/login/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'restaurant_app:home'
+SOCIAL_AUTH_RAISE_EXCEPTIONS = False
+
