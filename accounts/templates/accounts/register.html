@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Register - AI Video Ads Creator{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/register.css' %}">
+<style>
+    .social-register {
+        margin-top: 20px;
+        text-align: center;
+    }
+    .google-register-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #fff;
+        color: #757575;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 10px 20px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        text-decoration: none;
+        width: 100%;
+        max-width: 300px;
+    }
+    .google-register-button:hover {
+        background-color: #f5f5f5;
+        color: #757575;
+        text-decoration: none;
+    }
+    .google-icon {
+        background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="%234285F4" d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z"/><path fill="%2334A853" d="M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z"/><path fill="%23FBBC05" d="M11.69 28.18C11.25 26.86 11 25.45 11 24s.25-2.86.69-4.18v-5.7H4.34C2.85 17.09 2 20.45 2 24c0 3.55.85 6.91 2.34 9.88l7.35-5.7z"/><path fill="%23EA4335" d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7c1.73-5.2 6.58-9.07 12.31-9.07z"/><path fill="none" d="M2 2h44v44H2z"/></svg>');
+        width: 18px;
+        height: 18px;
+        background-size: contain;
+        margin-right: 10px;
+        display: inline-block;
+    }
+    .or-divider {
+        margin: 20px 0;
+        text-align: center;
+        position: relative;
+    }
+    .or-divider::before,
+    .or-divider::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 45%;
+        height: 1px;
+        background-color: #ddd;
+    }
+    .or-divider::before {
+        left: 0;
+    }
+    .or-divider::after {
+        right: 0;
+    }
+    .or-text {
+        background-color: #fff;
+        padding: 0 10px;
+        color: #757575;
+        font-size: 14px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="register-container">
+    <div class="register-card">
+        <div class="register-header">
+            <h2 class="register-title">
+                <i class="fas fa-user-plus me-2"></i>Create Account
+            </h2>
+        </div>
+        <div class="register-body">
+            <div class="social-register">
+                <a href="{% url 'social:begin' 'google-oauth2' %}" class="google-register-button">
+                    <span class="google-icon"></span>
+                    Sign up with Google
+                </a>
+            </div>
+            <div class="or-divider">
+                <span class="or-text">OR</span>
+            </div>
+            <form method="post" class="register-form" novalidate>
+                {% csrf_token %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert {{ message.tags }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                {% for field in form %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% if field.errors %}
+                            {% for error in field.errors %}
+                                <div class="error-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="register-button">
+                    <i class="fas fa-user-plus me-2"></i>Register
+                </button>
+            </form>
+        </div>
+        <div class="register-footer">
+            <p class="mb-0">
+                Already have an account? <a href="{% url 'accounts:login' %}">Login here</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
