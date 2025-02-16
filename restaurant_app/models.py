@@ -54,6 +54,8 @@ class Rest_detail(models.Model):
     phone_number = models.CharField(max_length=20,blank=False,default='phone_number')
     email = models.EmailField(max_length=255,blank=False,default='email')
     image = models.ImageField(upload_to='restaurant/',default='defa/defa.png')
+    description1 = models.CharField(max_length=255,default='Enjoy OurDelicious Meal')
+    description2 = models.CharField(max_length=1500,default='Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit. Aliqu diam amet diam et eos. Clita erat ipsum et lorem et sit, sed stet lorem sit clita duo justo magna dolore erat amet')
 
     def __str__(self):
         return f"{self.name}"
