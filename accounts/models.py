@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Account(models.Model):
-    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    user = models.OneToOneField(User,on_delete=models.CASCADE, related_name='account')
     credits = models.SmallIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
