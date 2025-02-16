@@ -3,7 +3,7 @@ from .models import AboutUs, AboutUsImage, Rest_detail,Services,Drinks,Meals,San
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from django.db.models import QuerySet
-
+import random
 
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
@@ -31,8 +31,11 @@ def home(request):
     grills = Grills.objects.all()
     sweets = Sweets.objects.all()
     salads = Salads.objects.all()
-    chefs = Chefs.objects.all()
     clients = Clients.objects.all()
+    chefs = Chefs.objects.all()
+    if chefs.count()>=4:
+        chefs = random.sample(list(chefs), 4)
+
     context = {
         'rest_detail': rest_detail,
         'services': services,

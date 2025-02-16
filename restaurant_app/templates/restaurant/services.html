@@ -24,7 +24,7 @@
                         </div>
                     </div>
 
-                    {% if forloop.counter|divisibleby:4 and not forloop.last %}
+                    {% if forloop.counter|divisibleby:4 and not forloop.last %}<p></p>
                     </div><div class="row g-4"> <!-- Close the current row and start a new one -->
                     {% endif %}
                     {% endfor %}
