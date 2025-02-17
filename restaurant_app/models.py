@@ -57,6 +57,18 @@ class Rest_detail(models.Model):
     description1 = models.CharField(max_length=255,default='Enjoy OurDelicious Meal')
     description2 = models.CharField(max_length=1500,default='Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit. Aliqu diam amet diam et eos. Clita erat ipsum et lorem et sit, sed stet lorem sit clita duo justo magna dolore erat amet')
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        
+        # Resize the image
+        if self.image:
+            img_path = self.image.path
+            with Image.open(img_path) as img:
+                # if img.height > 400 or img.width > 400:  # Adjust dimensions as needed
+                    output_size = (500, 500)
+                    img = img.resize(output_size, Image.Resampling.LANCZOS)
+                    img.save(img_path)
+
     def __str__(self):
         return f"{self.name}"
 
