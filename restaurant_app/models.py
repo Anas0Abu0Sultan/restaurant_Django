@@ -12,12 +12,12 @@ class Food(models.Model):
         LARG = 'LA','Larg'
 
     name = models.CharField(max_length=255,blank=False,default='food')
-    price = models.DecimalField(max_digits=5, decimal_places=2,default=0.0)
-    last_price = models.DecimalField(max_digits=5, decimal_places=2,default=price)
+    price = models.DecimalField(max_digits=6, decimal_places=2,default=0.0)
+    last_price = models.DecimalField(max_digits=6, decimal_places=2,default=price)
     size = models.CharField(max_length=2,choices=Size.choices,default=Size.SMALL)
     image = models.ImageField(upload_to=upload_to_dynamic,default='defa/defa.png')
     description = models.CharField(max_length=255,blank=False,default='description')
-    category = models.CharField(max_length=250,blank=False,default='food_menu')
+    # category = models.CharField(max_length=250,blank=False,default='food_menu')
     class Meta:
         abstract = True 
 
@@ -54,6 +54,20 @@ class Rest_detail(models.Model):
     phone_number = models.CharField(max_length=20,blank=False,default='phone_number')
     email = models.EmailField(max_length=255,blank=False,default='email')
     image = models.ImageField(upload_to='restaurant/',default='defa/defa.png')
+    description1 = models.CharField(max_length=255,default='Enjoy OurDelicious Meal')
+    description2 = models.CharField(max_length=1500,default='Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit. Aliqu diam amet diam et eos. Clita erat ipsum et lorem et sit, sed stet lorem sit clita duo justo magna dolore erat amet')
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        
+        # Resize the image
+        if self.image:
+            img_path = self.image.path
+            with Image.open(img_path) as img:
+                # if img.height > 400 or img.width > 400:  # Adjust dimensions as needed
+                    output_size = (500, 500)
+                    img = img.resize(output_size, Image.Resampling.LANCZOS)
+                    img.save(img_path)
 
     def __str__(self):
         return f"{self.name}"
