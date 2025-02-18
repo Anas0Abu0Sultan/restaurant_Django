@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from django.db.models import QuerySet
 import random
+from django.urls import reverse
 
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
@@ -36,6 +37,19 @@ def home(request):
     if chefs.count()>=4:
         chefs = random.sample(list(chefs), 4)
 
+    combined_items = list(chain(drinks, meals, sandwiches, grills, sweets, salads))
+    shuffle(combined_items)  # Shuffle the combined items
+    items = combined_items[:10]  # Get 10 random items
+
+    # Ensure there are items before slicing
+    if items:
+        half = len(items) // 2
+        first_half = items[:half]
+        second_half = items[half:]
+    else:
+        first_half = []
+        second_half = []
+
     context = {
         'rest_detail': rest_detail,
         'services': services,
@@ -49,6 +63,8 @@ def home(request):
         'salads': salads,
         'chefs': chefs,
         'clients': clients,
+        'first_half': first_half,
+        'second_half': second_half,
         }
     return render(request,'restaurant/index.html',context)
 
@@ -60,15 +76,21 @@ def about(request):
     paginator = Paginator(chefs_list,8)
     page_number = request.GET.get('page')
     chefs  = paginator.get_page(page_number)
+    rest_detail = get_object_or_404(Rest_detail,pk =1)
+    breadcrumb_section_url = reverse('restaurant_app:services')
+
 
     context = {
         'about_us': about_us,
         'about_us_images': about_us_images,
         'page_title': 'About Us',
         'breadcrumb_section': 'Services',
+        'breadcrumb_section_url': breadcrumb_section_url,
         'breadcrumb_active': 'About',
         'about':'active',
         'chefs':chefs,
+        'rest_detail': rest_detail,
+
         }
     return render(request,'restaurant/about.html',context)
 
@@ -79,12 +101,19 @@ def about(request):
 
 def service(request):
     services = Services.objects.all()
+    rest_detail = get_object_or_404(Rest_detail,pk =1)
+    breadcrumb_section_url = reverse('restaurant_app:about')
+
     context = {
         'services': services,
         'service':'active',
         'page_title': 'Services',
         'breadcrumb_section': 'About',
         'breadcrumb_active': 'Services',
+        'rest_detail': rest_detail,
+        'breadcrumb_section_url': breadcrumb_section_url,
+
+
         }
     return render(request,'restaurant/services.html',context)
 
@@ -103,6 +132,8 @@ def menu(request, category):
     grills = Grills.objects.all().order_by('-price')
     sweets = Sweets.objects.all().order_by('-price')
     salads = Salads.objects.all().order_by('-price')
+    rest_detail = get_object_or_404(Rest_detail,pk =1)
+    breadcrumb_section_url = reverse('restaurant_app:contact')
 
         # Filter menu items based on the selected category
     if category == 'drinks':
@@ -145,13 +176,16 @@ def menu(request, category):
     context = {
         'menu':'active',
         'page_title': 'Food Menu',
-        'breadcrumb_section': 'About',
+        'breadcrumb_section': 'Contact Us',
         'breadcrumb_active': 'Menu',
         'items': items,
         'category': category,
         'first_half': first_half,
         'second_half': second_half,
         'name_page': name_page,
+        'rest_detail':rest_detail,
+        'breadcrumb_section_url': breadcrumb_section_url,
+
         }
     return render(request,'restaurant/menu.html',context)
 
@@ -160,15 +194,21 @@ def menu(request, category):
 
 def testimonial(request):
     clients = Clients.objects.all()
+    rest_detail = get_object_or_404(Rest_detail,pk =1)
+
     context = {
         'clients': clients,
+        'rest_detail':rest_detail,
         }
     return render(request,'testimonial.html',context)
 
 def our_team(request):
     chefs = Chefs.objects.all()
+    rest_detail = get_object_or_404(Rest_detail,pk =1)
+
     context = {
         'chefs': chefs,
+        'rest_detail':rest_detail,
         }
     return render(request,'team.html',context)
 
@@ -177,6 +217,9 @@ def our_team(request):
 
 
 def contact(request):
+    rest_detail = get_object_or_404(Rest_detail,pk =1)
+    breadcrumb_section_url = reverse('restaurant_app:menu', kwargs={'category': 'choose_as_you_like'})
+
     form = ContactForm()
     if request.method == 'POST':
         form = ContactForm(request.POST)
@@ -210,10 +253,11 @@ def contact(request):
         'contact_emails':contact_emails,
         'contact':'active',
         'page_title': 'Contact Us',
-        'breadcrumb_section': 'About',
-        'breadcrumb_active': 'Menu',
+        'breadcrumb_section': 'Menu',
+        'breadcrumb_active': 'Contact Us',
         'form': form,
-    
+        'rest_detail':rest_detail,
+        'breadcrumb_section_url':breadcrumb_section_url,
     }
     
     return render(request, 'restaurant/contact.html', context)

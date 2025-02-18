@@ -12,12 +12,12 @@ class Food(models.Model):
         LARG = 'LA','Larg'
 
     name = models.CharField(max_length=255,blank=False,default='food')
-    price = models.DecimalField(max_digits=5, decimal_places=2,default=0.0)
-    last_price = models.DecimalField(max_digits=5, decimal_places=2,default=price)
+    price = models.DecimalField(max_digits=6, decimal_places=2,default=0.0)
+    last_price = models.DecimalField(max_digits=6, decimal_places=2,default=price)
     size = models.CharField(max_length=2,choices=Size.choices,default=Size.SMALL)
     image = models.ImageField(upload_to=upload_to_dynamic,default='defa/defa.png')
     description = models.CharField(max_length=255,blank=False,default='description')
-    category = models.CharField(max_length=250,blank=False,default='food_menu')
+    # category = models.CharField(max_length=250,blank=False,default='food_menu')
     class Meta:
         abstract = True 
 
