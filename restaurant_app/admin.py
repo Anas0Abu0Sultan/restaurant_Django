@@ -6,37 +6,37 @@ admin.site.register(Contact)
 
 @admin.register(Drinks)
 class DrinksAdmin(admin.ModelAdmin):
-    list_display=['name','price','last_price','size','image','type_of_drink']
+    list_display=['name','price','size','image','type_of_drink']
     list_filter = ['size','type_of_drink']
     search_fields = ['name']
 
 @admin.register(Meals)
 class MealsAdmin(admin.ModelAdmin):
-    list_display=['name','price','last_price','size','image']
-    list_filter = ['size']
+    list_display=['name','price','image']
+    list_filter = ['name']
     search_fields = ['name']
 
 @admin.register(Sandwiches)
 class SandwichesAdmin(admin.ModelAdmin):
-    list_display=['name','price','last_price','size','image']
-    list_filter = ['size']
+    list_display=['name','price','image']
+    list_filter = ['name']
     search_fields = ['name']
 
 @admin.register(Grills)
 class GrillsAdmin(admin.ModelAdmin):
-    list_display=['name','price','last_price','size','image']
-    list_filter = ['size']
+    list_display=['name','price','image']
+    list_filter = ['name']
     search_fields = ['name']
 
 @admin.register(Sweets)
 class SweetsAdmin(admin.ModelAdmin):
-    list_display=['name','price','last_price','size','image']
-    list_filter = ['size']
+    list_display=['name','price','image']
+    list_filter = ['name']
     search_fields = ['name']
 
 @admin.register(Salads)
 class SaladsAdmin(admin.ModelAdmin):
-    list_display=['name','price','last_price','size','image']
+    list_display=['name','price','size','image']
     list_filter = ['size']
     search_fields = ['name']
 
