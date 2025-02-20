@@ -5,12 +5,13 @@ from django.core.paginator import Paginator
 from django.db.models import QuerySet
 import random
 from django.urls import reverse
-
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from .forms import ContactForm
 from django.contrib import messages
-
+from itertools import chain
+from random import shuffle
+from django.contrib.auth.decorators import login_required
 
 def test(request):
     services = Services.objects.all()
@@ -122,8 +123,7 @@ def service(request):
 
 
 
-from itertools import chain
-from random import shuffle
+
 def menu(request, category):
 
     drinks = Drinks.objects.all().order_by('-price')
@@ -266,3 +266,5 @@ def contact(request):
 
 def booking(request):
     pass
+
+

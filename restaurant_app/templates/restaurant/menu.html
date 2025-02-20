@@ -72,36 +72,15 @@
                 </ul>
             </div>
 
-           <!-- menu_content.html -->
+   
 
 
-{% comment %} 
-<div id="menu-content">
-    {% for item in items %}
-        <div class="col-lg-6">
-            <div class="d-flex align-items-center">
-                <img class="flex-shrink-0 img-fluid rounded" src="{{ item.image.url }}" alt="" style="width: 80px;">
-                <div class="w-100 d-flex flex-column text-start ps-4">
-                    <h5 class="d-flex justify-content-between border-bottom pb-2">
-                        <span>{{ item.name }}</span>
-                        <span class="text-primary">${{ item.price }}</span>
-                    </h5>
-                    <small class="fst-italic">{{ item.description }}</small>
-                </div>
-            </div>
-        </div>
-    {% endfor %}
-</div>
-        </div>
-    </div>
-    <!-- Menu End -->
-
-
-         {% endcomment %}
+                    {% comment %} NEW  {% endcomment %}
 
 
 
-         <div id="menu-content" class="row g-4">
+
+         {% comment %} <div id="menu-content" class="row g-4">
             <!-- Left Column (First Half of Items) -->
             <div class="col-lg-6">
                 {% for item in first_half %}
@@ -133,10 +112,100 @@
                 </div>
                 {% endfor %}
             </div>
+        </div> 
+ {% endcomment %}
+
+
+
+
+ 
+<div id="menu-content" class="row g-4">
+    <!-- Left Column (First Half of Items) -->
+    <div class="col-lg-6">
+        {% for item in first_half %}
+        <div class="d-flex align-items-center mb-4">
+            <img class="flex-shrink-0 img-fluid rounded" src="{{ item.image.url }}" alt="{{ item.name }}" style="width: 80px;">
+            <div class="w-100 d-flex flex-column text-start ps-4">
+                <h5 class="d-flex justify-content-between border-bottom pb-2">
+                    <span>{{ item.name }}</span>
+                    <span class="text-primary">${{ item.price }}</span>
+                </h5>
+                <small class="fst-italic">{{ item.description }}</small>
+                <div class="mt-2">
+                    <button class="btn btn-sm btn-primary add-to-cart-btn" 
+                        data-name="{{ item.name }}" 
+                        data-id="{{ item.id }}" 
+                        data-type="{{ category }}" 
+                        data-price="{{ item.price }}"
+                        data-has-size="{% if category == 'Drinks' or category == 'Salads' %}true{% else %}false{% endif %}">
+                        <i class="fas fa-shopping-cart"></i> Add to Cart
+                    </button>
+                </div>
+            </div>
         </div>
+        {% endfor %}
+    </div>
+
+    <!-- Right Column (Second Half of Items) -->
+    <div class="col-lg-6">
+        {% for item in second_half %}
+        <div class="d-flex align-items-center mb-4">
+            <img class="flex-shrink-0 img-fluid rounded" src="{{ item.image.url }}" alt="{{ item.name }}" style="width: 80px;">
+            <div class="w-100 d-flex flex-column text-start ps-4">
+                <h5 class="d-flex justify-content-between border-bottom pb-2">
+                    <span>{{ item.name }}</span>
+                    <span class="text-primary">${{ item.price }}</span>
+                </h5>
+                <small class="fst-italic">{{ item.description }}</small>
+                <div class="mt-2">
+                    <button class="btn btn-sm btn-primary add-to-cart-btn" 
+                        data-name="{{ item.name }}" 
+                        data-id="{{ item.id }}" 
+                        data-type="{{ category }}" 
+                        data-price="{{ item.price }}"
+                        data-has-size="{% if category == 'Drinks' or category == 'Salads' %}true{% else %}false{% endif %}">
+                        <i class="fas fa-shopping-cart"></i> Add to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 
 
-
-
-
+<!-- Add to Cart Modal -->
+<div class="modal fade" id="addToCartModal" tabindex="-1" aria-labelledby="addToCartModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addToCartModalLabel">Add to Cart</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addToCartForm">
+                    {% csrf_token %}
+                    <input type="hidden" id="foodId" name="food_id">
+                    <input type="hidden" id="foodType" name="food_type">
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Quantity</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" min="1" value="1" required>
+                    </div>
+                    <div class="mb-3" id="sizeField" style="display: none;">
+                        <label for="size" class="form-label">Size</label>
+                        <select class="form-select" id="size" name="size">
+                            <option value="SM">Small</option>
+                            <option value="ME">Medium</option>
+                            <option value="LA">Large</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="submitAddToCart">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

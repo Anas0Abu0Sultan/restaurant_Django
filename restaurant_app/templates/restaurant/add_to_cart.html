@@ -1,0 +1,23 @@
+<!-- add_to_cart.html -->
+{% extends 'restaurant/base.html' %}
+
+{% block content %}
+<h1>Add {{ item.name }} to Your Cart</h1>
+<img src="{{ item.image.url }}" alt="{{ item.name }}" style="width: 100px;">
+<p>{{ item.description }}</p>
+<p>Price: ${{ item.price }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    <label for="size">Size:</label>
+    <select name="size" required>
+        <option value="SM">Small</option>
+        <option value="ME">Medium</option>
+        <option value="LA">Large</option>
+    </select>
+    <label for="quantity">Quantity:</label>
+    <input type="number" name="quantity" min="1" value="1" required>
+    <button type="submit" class="btn btn-success">Add to Cart</button>
+</form>
+<a href="{% url 'restaurant_app:menu' category='all' %}" class="btn btn-secondary">Back to Menu</a>
+{% endblock %}
