@@ -1,86 +1,77 @@
 {% extends 'restaurant/base_other.html' %}
+{% load custom_filters %}
 
 {% block content %}
-      <!-- Menu Start -->
-      <div class="container-xxl py-5">
-        <div class="container">
-            <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-                <h5 class="section-title ff-secondary text-center text-primary fw-normal">Food Menu</h5>
-                <h1 class="mb-5">{{ name_page|default:"Most Popular Items" }}</h1>
+<!-- Menu Start -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h5 class="section-title ff-secondary text-center text-primary fw-normal">Food Menu</h5>
+            <h1 class="mb-5">{{ name_page|default:"Most Popular Items" }}</h1>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.1s">
+            <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5">
+                <li class="nav-item">
+                    <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 {% if category == 'Drinks' %}active{% endif %}" href="{% url 'restaurant_app:menu' 'Drinks' %}">
+                        <i class="fa fa-coffee fa-2x text-primary"></i>
+                        <div class="ps-3">
+                            <small class="text-body">Refreshing</small>
+                            <h6 class="mt-n1 mb-0">Drinks</h6>
                         </div>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="d-flex align-items-center text-start mx-3 pb-3 {% if category == 'Meals' %}active{% endif %}" href="{% url 'restaurant_app:menu' 'Meals' %}">
+                        <i class="fa fa-hamburger fa-2x text-primary"></i>
+                        <div class="ps-3">
+                            <small class="text-body">Hearty</small>
+                            <h6 class="mt-n1 mb-0">Meals</h6>
+                        </div>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="d-flex align-items-center text-start mx-3 pb-3 {% if category == 'Sandwiches' %}active{% endif %}" href="{% url 'restaurant_app:menu' 'Sandwiches' %}">
+                        <i class="fa fa-bread-slice fa-2x text-primary"></i>
+                        <div class="ps-3">
+                            <small class="text-body">Tasty</small>
+                            <h6 class="mt-n1 mb-0">Sandwiches</h6>
+                        </div>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="d-flex align-items-center text-start mx-3 pb-3 {% if category == 'Grills' %}active{% endif %}" href="{% url 'restaurant_app:menu' 'Grills' %}">
+                        <i class="fa fa-fire fa-2x text-primary"></i>
+                        <div class="ps-3">
+                            <small class="text-body">Grilled</small>
+                            <h6 class="mt-n1 mb-0">Grills</h6>
+                        </div>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="d-flex align-items-center text-start mx-3 pb-3 {% if category == 'Sweets' %}active{% endif %}" href="{% url 'restaurant_app:menu' 'Sweets' %}">
+                        <i class="fa fa-ice-cream fa-2x text-primary"></i>
+                        <div class="ps-3">
+                            <small class="text-body">Sweet</small>
+                            <h6 class="mt-n1 mb-0">Sweets</h6>
+                        </div>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="d-flex align-items-center text-start mx-3 me-0 pb-3 {% if category == 'Salads' %}active{% endif %}" href="{% url 'restaurant_app:menu' 'Salads' %}">
+                        <i class="fa fa-leaf fa-2x text-primary"></i>
+                        <div class="ps-3">
+                            <small class="text-body">Healthy</small>
+                            <h6 class="mt-n1 mb-0">Salads</h6>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
 
-            <!-- Tab Navigation -->
-            <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.1s">
-                <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5">
-                    <li class="nav-item">
-                        <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 {% if category == 'drinks' %}active{% endif %}" href="{% url 'restaurant_app:menu' 'drinks' %}">
-    <i class="fa fa-coffee fa-2x text-primary"></i>
-    <div class="ps-3">
-        <small class="text-body">Refreshing</small>
-        <h6 class="mt-n1 mb-0">Drinks</h6>
-    </div>
-</a>
-
-                    </li>
-                    <li class="nav-item">
-                        <a class="d-flex align-items-center text-start mx-3 pb-3 {% if category == 'meals' %}active{% endif %}" href="{% url 'restaurant_app:menu'  'meals' %}" >
-                            <i class="fa fa-hamburger fa-2x text-primary"></i>
-                            <div class="ps-3">
-                                <small class="text-body">Hearty</small>
-                                <h6 class="mt-n1 mb-0">Meals</h6>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="d-flex align-items-center text-start mx-3 pb-3 {% if category == 'sandwiches' %}active{% endif %}" href="{% url 'restaurant_app:menu'  'sandwiches' %}">
-                            <i class="fa fa-bread-slice fa-2x text-primary"></i>
-                            <div class="ps-3">
-                                <small class="text-body">Tasty</small>
-                                <h6 class="mt-n1 mb-0">Sandwiches</h6>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="d-flex align-items-center text-start mx-3 pb-3 {% if category == 'grills' %}active{% endif %}" href="{% url 'restaurant_app:menu'  'grills' %}" >
-                            <i class="fa fa-fire fa-2x text-primary"></i>
-                            <div class="ps-3">
-                                <small class="text-body">Grilled</small>
-                                <h6 class="mt-n1 mb-0">Grills</h6>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="d-flex align-items-center text-start mx-3 pb-3 {% if category == 'sweets' %}active{% endif %}" href="{% url 'restaurant_app:menu'  'sweets' %}" >
-                            <i class="fa fa-ice-cream fa-2x text-primary"></i>
-                            <div class="ps-3">
-                                <small class="text-body">Sweet</small>
-                                <h6 class="mt-n1 mb-0">Sweets</h6>
-                            </div>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        {% comment %} <a class="d-flex align-items-center text-start mx-3 me-0 pb-3" href="#" hx-get="{% url 'menu' 'salads' %}" hx-target="#menu-content"> {% endcomment %}
-                        <a class="d-flex align-items-center text-start mx-3 me-0 pb-3 {% if category == 'salads' %}active{% endif %}" href="{% url 'restaurant_app:menu'  'salads' %}">
-
-                            <i class="fa fa-leaf fa-2x text-primary"></i>
-                            <div class="ps-3">
-                                <small class="text-body">Healthy</small>
-                                <h6 class="mt-n1 mb-0">Salads</h6>
-                            </div>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-   
-
-
-                    {% comment %} NEW  {% endcomment %}
-
-
-
-
-         {% comment %} <div id="menu-content" class="row g-4">
+        <!-- Menu Items -->
+        <div id="menu-content" class="row g-4">
             <!-- Left Column (First Half of Items) -->
             <div class="col-lg-6">
                 {% for item in first_half %}
@@ -92,11 +83,20 @@
                             <span class="text-primary">${{ item.price }}</span>
                         </h5>
                         <small class="fst-italic">{{ item.description }}</small>
+                        <div class="mt-2">
+                            <button class="btn btn-sm btn-primary add-to-cart-btn" 
+    data-id="{{ item.id }}" 
+    data-type="{{ item|class_name }}" 
+    data-has-size="{% if item|class_name == 'Drinks' or item|class_name == 'Salads' %}true{% else %}false{% endif %}">
+    <i class="fas fa-clipboard-list"></i> Add to Order
+
+</button>
+                        </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
-        
+
             <!-- Right Column (Second Half of Items) -->
             <div class="col-lg-6">
                 {% for item in second_half %}
@@ -108,68 +108,19 @@
                             <span class="text-primary">${{ item.price }}</span>
                         </h5>
                         <small class="fst-italic">{{ item.description }}</small>
+                        <div class="mt-2">
+                            <button class="btn btn-sm btn-primary add-to-cart-btn" 
+                                data-id="{{ item.id }}" 
+                                data-type="{{ item.get_class_name }}" 
+                                data-has-size="{% if item|class_name == 'Drinks' or item|class_name == 'Salads' %}true{% else %}false{% endif %}">
+                                <i class="fas fa-clipboard-list"></i> Add to Order
+                            </button>
+                        </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
-        </div> 
- {% endcomment %}
-
-
-
-
- 
-<div id="menu-content" class="row g-4">
-    <!-- Left Column (First Half of Items) -->
-    <div class="col-lg-6">
-        {% for item in first_half %}
-        <div class="d-flex align-items-center mb-4">
-            <img class="flex-shrink-0 img-fluid rounded" src="{{ item.image.url }}" alt="{{ item.name }}" style="width: 80px;">
-            <div class="w-100 d-flex flex-column text-start ps-4">
-                <h5 class="d-flex justify-content-between border-bottom pb-2">
-                    <span>{{ item.name }}</span>
-                    <span class="text-primary">${{ item.price }}</span>
-                </h5>
-                <small class="fst-italic">{{ item.description }}</small>
-                <div class="mt-2">
-                    <button class="btn btn-sm btn-primary add-to-cart-btn" 
-                        data-name="{{ item.name }}" 
-                        data-id="{{ item.id }}" 
-                        data-type="{{ category }}" 
-                        data-price="{{ item.price }}"
-                        data-has-size="{% if category == 'Drinks' or category == 'Salads' %}true{% else %}false{% endif %}">
-                        <i class="fas fa-shopping-cart"></i> Add to Cart
-                    </button>
-                </div>
-            </div>
         </div>
-        {% endfor %}
-    </div>
-
-    <!-- Right Column (Second Half of Items) -->
-    <div class="col-lg-6">
-        {% for item in second_half %}
-        <div class="d-flex align-items-center mb-4">
-            <img class="flex-shrink-0 img-fluid rounded" src="{{ item.image.url }}" alt="{{ item.name }}" style="width: 80px;">
-            <div class="w-100 d-flex flex-column text-start ps-4">
-                <h5 class="d-flex justify-content-between border-bottom pb-2">
-                    <span>{{ item.name }}</span>
-                    <span class="text-primary">${{ item.price }}</span>
-                </h5>
-                <small class="fst-italic">{{ item.description }}</small>
-                <div class="mt-2">
-                    <button class="btn btn-sm btn-primary add-to-cart-btn" 
-                        data-name="{{ item.name }}" 
-                        data-id="{{ item.id }}" 
-                        data-type="{{ category }}" 
-                        data-price="{{ item.price }}"
-                        data-has-size="{% if category == 'Drinks' or category == 'Salads' %}true{% else %}false{% endif %}">
-                        <i class="fas fa-shopping-cart"></i> Add to Cart
-                    </button>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
     </div>
 </div>
 
@@ -179,14 +130,14 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addToCartModalLabel">Add to Cart</h5>
+                <h5 class="modal-title" id="addToCartModalLabel">Add to Order</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="addToCartForm">
+                <form id="addToCartForm" method="post" action="{% url 'restaurant_app:add_to_cart' %}">
                     {% csrf_token %}
-                    <input type="hidden" id="foodId" name="food_id">
-                    <input type="hidden" id="foodType" name="food_type">
+                    <input type="hidden" id="foodId" name="object_id">
+                    <input type="hidden" id="foodType" name="content_type">
                     <div class="mb-3">
                         <label for="quantity" class="form-label">Quantity</label>
                         <input type="number" class="form-control" id="quantity" name="quantity" min="1" value="1" required>
@@ -199,13 +150,45 @@
                             <option value="LA">Large</option>
                         </select>
                     </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add to Order</button>
+                    </div>
                 </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="submitAddToCart">Add to Cart</button>
             </div>
         </div>
     </div>
 </div>
+<!-- JavaScript to Handle Modal and Form Submission -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+        const addToCartModal = new bootstrap.Modal(document.getElementById('addToCartModal'));
+        const foodIdInput = document.getElementById('foodId');
+        const foodTypeInput = document.getElementById('foodType');
+        const sizeField = document.getElementById('sizeField');
+        const sizeSelect = document.getElementById('size');
+    
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const itemId = button.getAttribute('data-id');
+                const itemType = button.getAttribute('data-type');
+                const hasSize = button.getAttribute('data-has-size') === 'true';
+    
+                foodIdInput.value = itemId;
+                foodTypeInput.value = itemType;
+    
+                if (hasSize) {
+                    sizeField.style.display = 'block';
+                    sizeSelect.required = true;
+                } else {
+                    sizeField.style.display = 'none';
+                    sizeSelect.required = false;
+                }
+    
+                addToCartModal.show();
+            });
+        });
+    });
+    </script>
 {% endblock %}

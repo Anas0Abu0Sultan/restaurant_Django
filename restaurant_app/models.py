@@ -14,12 +14,25 @@ class Food(models.Model):
     image = models.ImageField(upload_to=upload_to_dynamic,default='defa/defa.png')
     description = models.CharField(max_length=255,blank=False,default='description')
     # category = models.CharField(max_length=250,blank=False,default='food_menu')
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        
+        # Resize the image
+        if self.image:
+            img_path = self.image.path
+            with Image.open(img_path) as img:
+                    output_size = (90, 90)
+                    img = img.resize(output_size, Image.Resampling.LANCZOS)
+                    img.save(img_path)
+
     class Meta:
         abstract = True 
 
     def __str__(self):
         return f"{self.name}"
-
+    def get_class_name(self):
+        return self.__class__.__name__  # Returns the model name as a string
+    
 class SizePriceMixin(models.Model):
     class Size(models.TextChoices):
         SMALL = 'SM', 'Small'
@@ -191,9 +204,41 @@ class Rest_detail(models.Model):
 
 
 #                             <<<<<     Cart    >>>>>
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
+    def total_items(self):
+        return self.cart_items.count()
+
+    def __str__(self):
+        return f"Cart {self.id} - {self.user if self.user else 'Guest'}"
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, related_name="cart_items", on_delete=models.CASCADE)
+
+    # Generic relation to store any Food type (Drinks, Meals, etc.)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE) #This stores the type of model (e.g., Drinks, Meals, etc.).
+    object_id = models.PositiveIntegerField()
+    food_item = GenericForeignKey("content_type", "object_id") # This creates a dynamic reference to any food model using content_type and object_id.
+# When accessing cart_item.food_item, Django automatically retrieves the corresponding model instance.For example, if you have a Meal model, accessing cart_item.food_item will return a Meal instance
+
+    size = models.CharField(max_length=2, choices=SizePriceMixin.Size.choices, blank=True, null=True)
+    quantity = models.PositiveIntegerField(default=1)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    def total_price(self):
+        """Get the correct price by size for Drinks/Salads"""
+        if isinstance(self.food_item, SizePriceMixin):
+            return self.quantity * self.food_item.get_price_by_size(self.size)
+        return self.quantity * self.food_item.price  # For Meals, Sandwiches, etc.
+
+    def __str__(self):
+        return f"{self.quantity}x {self.food_item.name} ({self.size if self.size else 'No Size'})"
 
 #                             <<<<<     CartItem    >>>>>
 

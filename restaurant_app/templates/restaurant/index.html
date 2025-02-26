@@ -114,7 +114,7 @@
 
 
         <!-- Menu Start -->
-        <div class="container-xxl py-5">
+        <div class="container-xxl py-5"> 
             <div class="container">
                 <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
                     <h5 class="section-title ff-secondary text-center text-primary fw-normal">Food Menu</h5>
@@ -159,7 +159,8 @@
                             </a>
                         </li>
                     </ul>
-                   
+                    <a href="{% url 'restaurant_app:menu' category='choose_as_you_like' %}">
+
          <div id="menu-content" class="row g-4">
             <!-- Left Column (First Half of Items) -->
             <div class="col-lg-6">
@@ -193,9 +194,12 @@
                 {% endfor %}
             </div>
         </div>
+    </a>
                 </div>
+            
             </div>
         </div>
+
         <!-- Menu End -->
 
 
