@@ -1,37 +1,43 @@
-{% extends "base.html" %}
-{% block content %}
-<h2>Your Cart</h2>
+{% extends 'restaurant/base_other.html' %}
 
-{% if items %}
-    <table>
+{% block content %}
+<div class="container">
+    <h1>{{name| default:'Your'}}'s Order</h1>
+    {% if cart_items %}
+    <table class="table">
         <thead>
             <tr>
                 <th>Item</th>
                 <th>Size</th>
                 <th>Quantity</th>
                 <th>Price</th>
+                <th>Total</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            {% for item in items %}
+            {% for item in cart_items %}
             <tr>
-                <td>{{ item.food_type }} (ID: {{ item.food_id }})</td>
-                <td>{{ item.size }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>${{ item.calculated_price }}</td>
+                <td>{{ item.food_item.name }}</td>
+                <td>{{ item.display_size }}</td>                <td>
+                    <form method="post" action="{% url 'restaurant_app:update_cart_item' item.id %}">
+                        {% csrf_token %}
+                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1">
+                        <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                    </form>
+                </td>
+                <td>${{ item.item_price }}</td>
+<td>${{ item.total_price }}</td>
                 <td>
-                    <a href="{% url 'add_to_cart' item.food_type item.food_id item.size %}">+</a>
-                    <a href="{% url 'remove_from_cart' item.id %}">-</a>
+                    <a href="{% url 'restaurant_app:remove_cart_item' item.id %}" class="btn btn-sm btn-danger">Remove</a>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-
-    <h3>Total Price: ${{ total_price }}</h3>
-{% else %}
-    <p>Your cart is empty.</p>
-{% endif %}
-
+    <h3>Total: ${{ total_price }}</h3>
+    {% else %}
+    <p>Your Order is empty.</p>
+    {% endif %}
+</div>
 {% endblock %}

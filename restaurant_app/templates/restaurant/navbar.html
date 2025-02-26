@@ -24,7 +24,7 @@
                         </div>
                         <a href="{%url 'restaurant_app:contact'%}" class="nav-item nav-link {{ contact|default:'' }}">Contact</a>
                     </div>
-                    <a href="" class="btn btn-primary py-2 px-4">Book A Table</a>
+                    <a href="{% url 'restaurant_app:cart' %}" class="btn btn-primary py-2 px-4">Orders</a>
                     {% if user.is_authenticated %}
                     <form method="post" action="{% url 'accounts:logout' %}" class="d-inline">
                         {% csrf_token %}
