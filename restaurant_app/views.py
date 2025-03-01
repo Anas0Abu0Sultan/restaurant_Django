@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import AboutUs, AboutUsImage, Rest_detail,Services,Drinks,Meals,Sandwiches,Grills,Sweets,Salads,Chefs,Clients,Contact,Cart,CartItem
+from .models import AboutUs, AboutUsImage, Rest_detail,Services,Drinks,Meals,Sandwiches,Grills,Sweets,Salads,Chefs,Contact,Cart,CartItem,Comment
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from django.db.models import QuerySet
@@ -12,7 +12,10 @@ from django.contrib import messages
 from itertools import chain
 from random import shuffle
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
 
+#                                       <<<<<<     test    >>>>>
 def test(request):
     services = Services.objects.all()
     return render(request, 'restaurant/navbar_other.html',{'services':services})
@@ -21,6 +24,7 @@ def test(request):
 
 
 
+#                                       <<<<<<     Home    >>>>>
 
 def home(request):
     rest_detail = get_object_or_404(Rest_detail,pk =1)
@@ -33,7 +37,8 @@ def home(request):
     grills = Grills.objects.all()
     sweets = Sweets.objects.all()
     salads = Salads.objects.all()
-    clients = Clients.objects.all()
+    # clients = Clients.objects.all()
+    comments = Comment.objects.all().order_by('-created_at')
     chefs = Chefs.objects.all()
     if chefs.count()>=4:
         chefs = random.sample(list(chefs), 4)
@@ -63,20 +68,23 @@ def home(request):
         'sweets': sweets,
         'salads': salads,
         'chefs': chefs,
-        'clients': clients,
+        # 'clients': clients,
+        'comments':comments,
         'first_half': first_half,
         'second_half': second_half,
         }
     return render(request,'restaurant/index.html',context)
 
 
+#                                       <<<<<<     About    >>>>>
+
 def about(request):
     about_us = AboutUs.objects.first()
     about_us_images = AboutUsImage.objects.filter(about_us=about_us) if about_us else None
     chefs_list = Chefs.objects.all()
-    paginator = Paginator(chefs_list,8)
-    page_number = request.GET.get('page')
-    chefs  = paginator.get_page(page_number)
+    # paginator = Paginator(chefs_list,8)
+    # page_number = request.GET.get('page')
+    # chefs  = paginator.get_page(page_number)
     rest_detail = get_object_or_404(Rest_detail,pk =1)
     breadcrumb_section_url = reverse('restaurant_app:services')
 
@@ -89,7 +97,7 @@ def about(request):
         'breadcrumb_section_url': breadcrumb_section_url,
         'breadcrumb_active': 'About',
         'about':'active',
-        'chefs':chefs,
+        'chefs':chefs_list,
         'rest_detail': rest_detail,
 
         }
@@ -99,11 +107,14 @@ def about(request):
 
 
 
+#                                       <<<<<<     Service    >>>>>
 
 def service(request):
     services = Services.objects.all()
     rest_detail = get_object_or_404(Rest_detail,pk =1)
     breadcrumb_section_url = reverse('restaurant_app:about')
+    comments = Comment.objects.all().order_by('-created_at')
+
 
     context = {
         'services': services,
@@ -113,6 +124,7 @@ def service(request):
         'breadcrumb_active': 'Services',
         'rest_detail': rest_detail,
         'breadcrumb_section_url': breadcrumb_section_url,
+        'comments': comments,
 
 
         }
@@ -123,6 +135,7 @@ def service(request):
 
 
 
+#                                       <<<<<<     Menu    >>>>>
 
 def menu(request, category):
 
@@ -133,7 +146,7 @@ def menu(request, category):
     sweets = Sweets.objects.all().order_by('-price')
     salads = Salads.objects.all().order_by('-price')
     rest_detail = get_object_or_404(Rest_detail,pk =1)
-    breadcrumb_section_url = reverse('restaurant_app:contact')
+    breadcrumb_section_url = reverse('restaurant_app:cart')
 
         # Filter menu items based on the selected category
     if category == 'Drinks':
@@ -186,7 +199,7 @@ def menu(request, category):
     context = {
         'menu':'active',
         'page_title': 'Food Menu',
-        'breadcrumb_section': 'Contact Us',
+        'breadcrumb_section': 'my orders',
         'breadcrumb_active': 'Menu',
         'items': items,
         'category': category,
@@ -201,16 +214,21 @@ def menu(request, category):
 
 
 
+#                                       <<<<<<     Testimonial    >>>>>
 
 def testimonial(request):
-    clients = Clients.objects.all()
+    # clients = Clients.objects.all()
     rest_detail = get_object_or_404(Rest_detail,pk =1)
 
     context = {
-        'clients': clients,
+        # 'clients': clients,
         'rest_detail':rest_detail,
         }
     return render(request,'testimonial.html',context)
+
+
+
+#                                       <<<<<<     Team    >>>>>
 
 def our_team(request):
     chefs = Chefs.objects.all()
@@ -225,6 +243,7 @@ def our_team(request):
 
 
 
+#                                       <<<<<<     Contact    >>>>>
 
 def contact(request):
     rest_detail = get_object_or_404(Rest_detail,pk =1)
@@ -273,12 +292,38 @@ def contact(request):
     return render(request, 'restaurant/contact.html', context)
 
 
+#                                       <<<<<<     Booking    >>>>>
 
 def booking(request):
     pass
 
 
+#                                       <<<<<<     Addd to Cart    >>>>>
+
 from django.contrib.contenttypes.models import ContentType
+
+# @login_required
+# def add_to_cart(request):
+#     if request.method == 'POST':
+#         object_id = request.POST.get('object_id')
+#         content_type = request.POST.get('content_type')
+#         size = request.POST.get('size')
+#         quantity = int(request.POST.get('quantity', 1))
+#         content_type = ContentType.objects.get(model=content_type.lower())
+#         food_item = content_type.get_object_for_this_type(id=object_id)
+#         cart, created = Cart.objects.get_or_create(user=request.user if request.user.is_authenticated else None)
+#         cart_item, created = CartItem.objects.get_or_create(cart=cart,
+#                                                             content_type=content_type,
+#                                                             object_id=object_id,
+#                                                             size=size if size else None)
+#         if not created:
+#             cart_item.quantity += quantity
+#         else:
+#             cart_item.quantity = quantity
+
+#         cart_item.save()
+
+#     return redirect('restaurant_app:cart')            
 
 @login_required
 def add_to_cart(request):
@@ -287,23 +332,46 @@ def add_to_cart(request):
         content_type = request.POST.get('content_type')
         size = request.POST.get('size')
         quantity = int(request.POST.get('quantity', 1))
-        content_type = ContentType.objects.get(model=content_type.lower())
-        food_item = content_type.get_object_for_this_type(id=object_id)
-        cart, created = Cart.objects.get_or_create(user=request.user if request.user.is_authenticated else None)
-        cart_item, created = CartItem.objects.get_or_create(cart=cart,
-                                                            content_type=content_type,
-                                                            object_id=object_id,
-                                                            size=size if size else None)
-        if not created:
-            cart_item.quantity += quantity
-        else:
-            cart_item.quantity = quantity
 
-        cart_item.save()
+        try:
+            # Get the content type and food item
+            content_type = ContentType.objects.get(model=content_type.lower())
+            food_item = content_type.get_object_for_this_type(id=object_id)
 
-    return redirect('restaurant_app:cart')            
-            
+            # Ensure food_item exists
+            if food_item is None:
+                print(f"Food item not found for object_id: {object_id} and content_type: {content_type}")
+                return redirect('restaurant_app:menu')  # Redirect to menu or handle error
+
+            # Get or create the cart
+            cart, created = Cart.objects.get_or_create(user=request.user if request.user.is_authenticated else None)
+
+            # Get or create the cart item
+            cart_item, created = CartItem.objects.get_or_create(
+                cart=cart,
+                content_type=content_type,
+                object_id=object_id,
+                size=size if size else None
+            )
+
+            # Update quantity
+            if not created:
+                cart_item.quantity += quantity
+            else:
+                cart_item.quantity = quantity
+
+            cart_item.save()
+
+        except ContentType.DoesNotExist:
+            print(f"Invalid content_type: {content_type}")
+            return redirect('restaurant_app:menu')  # Redirect to menu or handle error
+        except Exception as e:
+            print(f"Error adding to cart: {e}")
+            return redirect('restaurant_app:menu')  # Redirect to menu or handle error
+
+    return redirect('restaurant_app:cart')
                                         
+#                                       <<<<<<     Cart    >>>>>
 
 @login_required
 def cart(request):
@@ -314,6 +382,8 @@ def cart(request):
     # Calculate the total price for all items in the cart
     total_price = 0
     for item in cart_items:
+        if item.food_item is None:
+            continue
         # Check if the food item has `get_price_by_size` method
         item.has_price_by_size = hasattr(item.food_item, 'get_price_by_size') and item.size
 
@@ -352,6 +422,7 @@ def cart(request):
 
     return render(request, 'restaurant/cart.html', context)
 
+#                                       <<<<<<     update  Cart    >>>>>
 
 def update_cart_item(request, item_id):
     cart_item = get_object_or_404(CartItem, id=item_id)
@@ -365,8 +436,284 @@ def update_cart_item(request, item_id):
 
     return redirect('restaurant_app:cart')
 
+#                                       <<<<<<     Remove from cart    >>>>>
 
 def remove_cart_item(request, item_id):
     cart_item = get_object_or_404(CartItem, id=item_id)
     cart_item.delete()
     return redirect('restaurant_app:cart')
+
+
+
+
+#                                       <<<<<<     Dashboard    >>>>>
+@staff_member_required
+def dashboard(request):
+    # Combine all food items from child models
+    drinks = Drinks.objects.all()
+    salads = Salads.objects.all()
+    meals = Meals.objects.all()
+    sandwiches = Sandwiches.objects.all()
+    grills = Grills.objects.all()
+    sweets = Sweets.objects.all()
+
+    # Combine all food items into a single list
+    food_items = list(drinks) + list(salads) + list(meals) + list(sandwiches) + list(grills) + list(sweets)
+
+    # Statistics
+    total_carts = Cart.objects.count()
+    total_comments = Comment.objects.count()
+    total_chefs = Chefs.objects.count()
+    total_services = Services.objects.count()
+    about_us = AboutUs.objects.first()
+    restaurant_details = Rest_detail.objects.first()
+
+    context = {
+        'total_carts': total_carts,
+        'total_comments': total_comments,
+        'total_chefs': total_chefs,
+        'total_services': total_services,
+        'about_us': about_us,
+        'rest_detail': restaurant_details,
+        'food_items': food_items,
+        'page_title': 'Admin Dashboard',
+        'breadcrumb_section': 'Menu',
+        'breadcrumb_active': 'Dashboard',
+        'Dashboard':'active',
+    }
+    return render(request, 'restaurant/dashboard.html', context)
+
+
+#                                       <<<<<<     Dashboard  Drinks     >>>>>
+
+from .forms import DrinkForm, SaladForm, MealForm, SandwichForm, GrillForm, SweetForm  # Create these forms
+@staff_member_required
+def add_drink(request):
+    form = DrinkForm()
+    if request.method == 'POST':
+        form = DrinkForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Drink added successfully!")
+            return redirect('restaurant_app:dashboard')
+        else:
+            messages.error(request, "There was an error adding the drink.")
+    return render(request, 'restaurant/add_food.html', {'form': form, 'food_type': 'Drink'})
+
+@staff_member_required
+def edit_drink(request, drink_id):
+    drink = get_object_or_404(Drinks, id=drink_id)
+    if request.method == 'POST':
+        form = DrinkForm(request.POST, request.FILES, instance=drink)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Drink updated successfully!")
+            return redirect('restaurant_app:dashboard')
+        else:
+            messages.error(request, "There was an error updating the drink.")
+    else:
+        form = DrinkForm(instance=drink)
+    return render(request, 'restaurant/edit_food.html', {'form': form, 'food_type': 'Drink'})
+
+
+@staff_member_required
+def delete_drink(request, drink_id):
+    drink = get_object_or_404(Drinks, id=drink_id)
+    drink.delete()
+    messages.success(request, "Drink deleted successfully!")
+    return redirect('restaurant_app:dashboard')
+
+
+
+#                                       <<<<<<     Dashboard  Salads     >>>>>
+@staff_member_required
+def add_salad(request):
+    form = SaladForm()
+    if request.method == 'POST':
+        form = SaladForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Salad added successfully!")
+            return redirect('restaurant_app:dashboard')
+        else:
+            messages.error(request, "There was an error adding the drink.")
+    return render(request, 'restaurant/add_food.html', {'form': form, 'food_type': 'Salad'})
+
+@staff_member_required
+def edit_salad(request, salad_id):
+    salad = get_object_or_404(Salads, id=salad_id)
+    if request.method == 'POST':
+        form = SaladForm(request.POST, request.FILES, instance=salad)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Salad updated successfully!")
+            return redirect('restaurant_app:dashboard')
+        else:
+            messages.error(request, "There was an error updating the Salad.")
+    else:
+        form = SaladForm(instance=salad)
+    return render(request, 'restaurant/edit_food.html', {'form': form, 'food_type': 'Salad'})
+
+@staff_member_required
+def delete_salad(request, salad_id):
+    salad = get_object_or_404(Salads, id=salad_id)
+    salad.delete()
+    messages.success(request, "Salad deleted successfully!")
+    return redirect('restaurant_app:dashboard')
+
+
+#                                       <<<<<<     Dashboard  Meal     >>>>>
+@staff_member_required
+def add_meal(request):
+    form = MealForm()
+    if request.method == 'POST':
+        form = MealForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Meal added successfully!")
+            return redirect('restaurant_app:dashboard')
+        else:
+            messages.error(request, "There was an error adding the Meal.")
+    return render(request, 'restaurant/add_food.html', {'form': form, 'food_type': 'Meal'})
+
+@staff_member_required
+def edit_meal(request, meal_id):
+    meal = get_object_or_404(Meals, id=meal_id)
+    if request.method == 'POST':
+        form = MealForm(request.POST, request.FILES, instance=meal)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Meal updated successfully!")
+            return redirect('restaurant_app:dashboard')
+        else:
+            messages.error(request, "There was an error updating the Meal.")
+    else:
+        form = MealForm(instance=meal)
+    return render(request, 'restaurant/edit_food.html', {'form': form, 'food_type': 'Meal'})
+
+@staff_member_required
+def delete_meal(request, meal_id):
+    meal = get_object_or_404(Meals, id=meal_id)
+    meal.delete()
+    messages.success(request, "Meal deleted successfully!")
+    return redirect('restaurant_app:dashboard')
+
+
+
+#                                       <<<<<<     Dashboard  Sandwich     >>>>>
+@staff_member_required
+def add_sandwich(request):
+    form = SandwichForm()
+    if request.method == 'POST':
+        form = SandwichForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Sandwich added successfully!")
+            return redirect('restaurant_app:dashboard')
+        else:
+            messages.error(request, "There was an error adding the sandwich.")
+    return render(request, 'restaurant/add_food.html', {'form': form, 'food_type': 'Sandwich'})
+
+@staff_member_required
+def edit_sandwich(request, sandwich_id):
+    sandwich = get_object_or_404(Sandwiches, id=sandwich_id)
+    if request.method == 'POST':
+        form = SandwichForm(request.POST, request.FILES, instance=sandwich)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Sandwich updated successfully!")
+            return redirect('restaurant_app:dashboard')
+        else:
+            messages.error(request, "There was an error updating the sandwich.")
+    else:
+        form = SandwichForm(instance=sandwich)
+    return render(request, 'restaurant/edit_food.html', {'form': form, 'food_type': 'Sandwich'})
+
+
+@staff_member_required
+def delete_sandwich(request, sandwich_id):
+    sandwich = get_object_or_404(Sandwiches, id=sandwich_id)
+    sandwich.delete()
+    messages.success(request, "Sandwich deleted successfully!")
+    return redirect('restaurant_app:dashboard')
+
+
+
+#                                       <<<<<<     Dashboard  Grill     >>>>>
+@staff_member_required
+def add_grill(request):
+    form = GrillForm()
+    if request.method == 'POST':
+        form = GrillForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Grill added successfully!")
+            return redirect('restaurant_app:dashboard')
+        else:
+            messages.error(request, "There was an error adding the Grill.")
+    return render(request, 'restaurant/add_food.html', {'form': form, 'food_type': 'Grill'})
+
+
+@staff_member_required
+def edit_grill(request, grill_id):
+    grill = get_object_or_404(Grills, id=grill_id)
+    if request.method == 'POST':
+        form = GrillForm(request.POST, request.FILES, instance=grill)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Grill updated successfully!")
+            return redirect('restaurant_app:dashboard')
+        else:
+            messages.error(request, "There was an error updating the grill.")
+    else:
+        form = GrillForm(instance=grill)
+    return render(request, 'restaurant/edit_food.html', {'form': form, 'food_type': 'Grill'})
+
+@staff_member_required
+def delete_grill(request, grill_id):
+    grill = get_object_or_404(Grills, id=grill_id)
+    grill.delete()
+    messages.success(request, "Grill deleted successfully!")
+    return redirect('restaurant_app:dashboard')
+
+
+
+
+#                                       <<<<<<     Dashboard  Sweet     >>>>>
+
+@staff_member_required
+def add_sweet(request):
+    form = SweetForm()
+    if request.method == 'POST':
+        form = SweetForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Sweet added successfully!")
+            return redirect('restaurant_app:dashboard')
+        else:
+            messages.error(request, "There was an error adding the sweet.")
+    return render(request, 'restaurant/add_food.html', {'form': form, 'food_type': 'Sweet'})
+
+@staff_member_required
+def edit_sweet(request, sweet_id):
+    sweet = get_object_or_404(Sweets, id=sweet_id)
+    if request.method == 'POST':
+        form = SweetForm(request.POST, request.FILES, instance=sweet)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Sweet updated successfully!")
+            return redirect('restaurant_app:dashboard')
+        else:
+            messages.error(request, "There was an error updating the sweet.")
+    else:
+        form = SweetForm(instance=sweet)
+    return render(request, 'restaurant/edit_food.html', {'form': form, 'food_type': 'Sweet'})
+
+@staff_member_required
+def delete_sweet(request, sweet_id):
+    sweet = get_object_or_404(Sweets, id=sweet_id)
+    sweet.delete()
+    messages.success(request, "Sweet deleted successfully!")
+    return redirect('restaurant_app:dashboard')
+
+

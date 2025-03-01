@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     # 'allauth.account',
     # 'allauth.socialaccount',
     # 'allauth.socialaccount.providers.google',
+    'widget_tweaks',
 ]
 
 # SOCIALACCOUNT_PROVIDERS = {
@@ -70,6 +71,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware', #this
+    
 ]
 
 ROOT_URLCONF = 'restaurant_project.urls'

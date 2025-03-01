@@ -2,39 +2,50 @@
 
 {% block content %}
 <div class="container">
-    <h1>{{name| default:'Your'}}'s Order</h1>
+    <div class="container d-flex align-items-center">
+        <a href="{% url 'restaurant_app:menu' 'd' %}" class="btn btn-outline-success btn-sm rounded-pill d-flex align-items-center gap-1">
+            <i class="fas fa-arrow-left"></i> Back to Menu
+        </a>
+        <div class="flex-grow-1 text-center">
+            <h1 class="mb-0">{{ name|default:"Your" }}'s Order</h1>
+        </div>
+    </div>
+
     {% if cart_items %}
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th>Size</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Total</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in cart_items %}
-            <tr>
-                <td>{{ item.food_item.name }}</td>
-                <td>{{ item.display_size }}</td>                <td>
-                    <form method="post" action="{% url 'restaurant_app:update_cart_item' item.id %}">
-                        {% csrf_token %}
-                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1">
-                        <button type="submit" class="btn btn-sm btn-primary">Update</button>
-                    </form>
-                </td>
-                <td>${{ item.item_price }}</td>
-<td>${{ item.total_price }}</td>
-                <td>
-                    <a href="{% url 'restaurant_app:remove_cart_item' item.id %}" class="btn btn-sm btn-danger">Remove</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive"> <!-- Make the table responsive -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Size</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr>
+                    <td>{{ item.food_item.name }}</td>
+                    <td>{{ item.display_size }}</td>
+                    <td>
+                        <form method="post" action="{% url 'restaurant_app:update_cart_item' item.id %}">
+                            {% csrf_token %}
+                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1">
+                            <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                        </form>
+                    </td>
+                    <td>${{ item.item_price }}</td>
+                    <td>${{ item.total_price }}</td>
+                    <td>
+                        <a href="{% url 'restaurant_app:remove_cart_item' item.id %}" class="btn btn-sm btn-danger">Remove</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     <h3>Total: ${{ total_price }}</h3>
     {% else %}
     <p>Your Order is empty.</p>
