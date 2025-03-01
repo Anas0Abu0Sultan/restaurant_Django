@@ -2,6 +2,8 @@ from django.db import models
 from PIL import Image
 import os
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+
 
 #                             <<<<<     FOOD    >>>>>
 
@@ -95,18 +97,28 @@ class Sweets(Food):
 #                             <<<<<     Clients    >>>>>
 
 
-class Clients(models.Model):
-    name = models.CharField(max_length=255,blank=False,default='Chef')
-    description = models.CharField(max_length=4000,blank=False,default='description Chef')
-    image = models.ImageField(upload_to='chef/',default='defa/client.png')
-    message =models.CharField(max_length=255,blank=False,default='Chef')
-    date = models.DateTimeField(auto_now_add=True)
+# class Clients(models.Model):
+#     name = models.CharField(max_length=255,blank=False,default='Chef')
+#     description = models.CharField(max_length=4000,blank=False,default='description Chef')
+#     image = models.ImageField(upload_to='chef/',default='defa/client.png')
+#     message =models.CharField(max_length=255,blank=False,default='Chef')
+#     date = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        ordering = ['-date']
+#     class Meta:
+#         ordering = ['-date']
+
+#     def __str__(self):
+#         return self.name
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
+    text = models.TextField(max_length=4000, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.name
+        return f'Comment by {self.user.username} on {self.created_at}'
+
 
 #                             <<<<<     Chefs    >>>>>
 
@@ -214,7 +226,8 @@ class Cart(models.Model):
 
     def total_items(self):
         return self.cart_items.count()
-
+    
+    
     def __str__(self):
         return f"Cart {self.id} - {self.user if self.user else 'Guest'}"
 
@@ -236,7 +249,14 @@ class CartItem(models.Model):
         if isinstance(self.food_item, SizePriceMixin):
             return self.quantity * self.food_item.get_price_by_size(self.size)
         return self.quantity * self.food_item.price  # For Meals, Sandwiches, etc.
+    def clean(self):
+        # Ensure food_item exists
+        if self.food_item is None:
+            raise ValidationError("The referenced food item does not exist.")
 
+    def save(self, *args, **kwargs):
+        self.clean()  # Run validation before saving
+        super().save(*args, **kwargs)
     def __str__(self):
         return f"{self.quantity}x {self.food_item.name} ({self.size if self.size else 'No Size'})"
 

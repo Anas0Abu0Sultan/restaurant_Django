@@ -2,113 +2,82 @@
 {% load static %}
 
 {% block content %}
+<!-- Owl Carousel CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+
+<style>
+    /* Custom styles for chef images */
+    .team-item img {
+        width: 150px;
+        height: 200px;
+    }
+    .team-item {
+        width: 280px;
+        margin: 0 auto;
+    }
+</style>
+
+
+
+
+<!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-counterup/2.1.0/jquery.counterup.min.js"></script>
+
+<!-- Owl Carousel JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+
+<!-- Waypoints -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
 
-      <!-- About Start -->
-      <div class="container-xxl py-5">
-        <div class="container">
-            <div class="row g-5 align-items-center">
-                <div class="col-lg-6">
-                    <div class="row g-3">
-                        {% for image in about_us_images %}
-                            <div class="col-6 text-start">
-                                <img class="img-fluid rounded w-100 wow zoomIn" data-wow-delay="0.1s" src="{{ image.image.url }}">
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
+<!-- Counter-Up -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Counter-Up/1.0.0/jquery.counterup.min.js"></script>
 
-
-                <div class="col-lg-6">
-                    <h5 class="section-title ff-secondary text-start text-primary fw-normal">About Us</h5>
-                    <h1 class="mb-4">Welcome to <i class="fa fa-utensils text-primary me-2"></i>Restoran</h1>
-                    <p class="mb-4">{{about_us.paragraph_one}}.</p>
-                    <p class="mb-4">{{about_us.paragraph_two}}.</p>
-                    <div class="row g-4 mb-4">
-                        <div class="col-sm-6">
-                            <div class="d-flex align-items-center border-start border-5 border-primary px-3">
-                                <h1 class="flex-shrink-0 display-5 text-primary mb-0" data-toggle="counter-up">{{about_us.experience_years}}</h1>
-                                <div class="ps-4">
-                                    <p class="mb-0">Years of</p>
-                                    <h6 class="text-uppercase mb-0">Experience</h6>
-                                </div>
-                            </div>
+<!-- About Start -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-6">
+                <div class="row g-3">
+                    {% for image in about_us_images %}
+                        <div class="col-6 text-start">
+                            <img class="img-fluid rounded w-100 wow zoomIn" data-wow-delay="0.1s" src="{{ image.image.url }}">
                         </div>
-                        <div class="col-sm-6">
-                            <div class="d-flex align-items-center border-start border-5 border-primary px-3">
-                                <h1 class="flex-shrink-0 display-5 text-primary mb-0" data-toggle="counter-up">{{about_us.master_chefs}}</h1>
-                                <div class="ps-4">
-                                    <p class="mb-0">Popular</p>
-                                    <h6 class="text-uppercase mb-0">Master Chefs</h6>
-                                </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <h5 class="section-title ff-secondary text-start text-primary fw-normal">About Us</h5>
+                <h1 class="mb-4">Welcome to <i class="fa fa-utensils text-primary me-2"></i>Restoran</h1>
+                <p class="mb-4">{{about_us.paragraph_one}}.</p>
+                <p class="mb-4">{{about_us.paragraph_two}}.</p>
+                <div class="row g-4 mb-4">
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center border-start border-5 border-primary px-3">
+                            <h1 class="flex-shrink-0 display-5 text-primary mb-0" data-toggle="counter-up">{{about_us.experience_years}}</h1>
+                            <div class="ps-4">
+                                <p class="mb-0">Years of</p>
+                                <h6 class="text-uppercase mb-0">Experience</h6>
                             </div>
                         </div>
                     </div>
-                    <a class="btn btn-primary py-3 px-5 mt-2" href="">Read More</a>
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center border-start border-5 border-primary px-3">
+                            <h1 class="flex-shrink-0 display-5 text-primary mb-0" data-toggle="counter-up">{{about_us.master_chefs}}</h1>
+                            <div class="ps-4">
+                                <p class="mb-0">Popular</p>
+                                <h6 class="text-uppercase mb-0">Master Chefs</h6>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-
+                <a class="btn btn-primary py-3 px-5 mt-2" href="">Read More</a>
             </div>
         </div>
     </div>
-    <!-- About End -->
-
-
-
-
-
-
-
-{% comment %} 
-
-        <!-- Team Start -->
-        <div class="container-xxl pt-5 pb-3">
-            <div class="container">
-                <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-                    <h5 class="section-title ff-secondary text-center text-primary fw-normal">Team Members</h5>
-                    <h1 class="mb-5">Our Master Chefs</h1>
-                </div>
-                <div class="row g-4">
-
-
-
-                    {% for chef in chefs %}
-
-                    <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                        <div class="team-item text-center rounded overflow-hidden">
-                            <div class="rounded-circle overflow-hidden m-4">
-                                <img class="img-fluid" src="{{chef.image.url}}" alt="">
-                            </div>
-                            <h5 class="mb-0">{{chef.name}}</h5>
-                            <small>{{chef.description}}</small>
-                            <div class="d-flex justify-content-center mt-3">
-                                <a class="btn btn-square btn-primary mx-1" href="{{chef.facebook}}"><i class="fab fa-facebook-f"></i></a>
-                                <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-twitter"></i></a>
-                                <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-instagram"></i></a>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-                    {% endfor %}
-
-                   
-                </div>
-            </div>
-        </div>
-
-
-
-        <!-- Team End --> {% endcomment %}
-
-
-
-
-
-
+</div>
+<!-- About End -->
 <!-- Team Start -->
 <div class="container-xxl pt-5 pb-3">
     <div class="container">
@@ -116,56 +85,61 @@
             <h5 class="section-title ff-secondary text-center text-primary fw-normal">Team Members</h5>
             <h1 class="mb-5">Our Master Chefs</h1>
         </div>
-        <div class="row g-4">
+        <!-- Owl Carousel Container -->
+        <div class="owl-carousel chef-carousel wow fadeInUp" data-wow-delay="0.1s">
             {% for chef in chefs %}
-                <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="team-item text-center rounded overflow-hidden">
-                        <div class="rounded-circle overflow-hidden m-4">
-                            <img class="img-fluid" src="{{ chef.image.url }}" alt="">
-                        </div>
-                        <h5 class="mb-0">{{ chef.name }}</h5>
-                        <small>{{ chef.description }}</small>
-                        <div class="d-flex justify-content-center mt-3">
-                            <a class="btn btn-square btn-primary mx-1" href="{{ chef.facebook }}"><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-instagram"></i></a>
-                        </div>
+            <div class="team-item text-center rounded overflow-hidden" style="height: 366px;">
+                <div class="rounded-circle overflow-hidden m-4">
+                        <img class="img-fluid" src="{{ chef.image.url }}" alt="{{ chef.name }}">
+                    </div>
+                    <h5 class="mb-0">{{ chef.name }}</h5>
+                    <small>{{ chef.description }}</small>
+                    <div class="d-flex justify-content-center mt-3">
+                        <a class="btn btn-square btn-primary mx-1" href="{{ chef.facebook }}"><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
             {% endfor %}
         </div>
-
-        <!-- Pagination Start -->
-        <div class="d-flex justify-content-center mt-4">
-            <div class="pagination">
-                <span class="page-item">
-                    {% if chefs.has_previous %}
-                        <a class="page-link" href="?page=1">&laquo; First</a>
-                        <a class="page-link" href="?page={{ chefs.previous_page_number }}">Previous</a>
-                    {% endif %}
-                </span>
-                
-                <span class="page-item">
-                    <span class="page-link">
-                        Page {{ chefs.number }} of {{ chefs.paginator.num_pages }}
-                    </span>
-                </span>
-                
-                <span class="page-item">
-                    {% if chefs.has_next %}
-                        <a class="page-link" href="?page={{ chefs.next_page_number }}">Next</a>
-                        <a class="page-link" href="?page={{ chefs.paginator.num_pages }}">Last &raquo;</a>
-                    {% endif %}
-                </span>
-            </div>
-        </div>
-        <!-- Pagination End -->
     </div>
 </div>
 <!-- Team End -->
-        
- 
 
+<!-- Initialize Owl Carousel for Chefs -->
+<script>
+    $(document).ready(function(){
+        $(".chef-carousel").owlCarousel({
+            items: 4,  // Number of items to display at a time
+            loop: true,  // Infinite loop
+            autoplay: true,  // Autoplay
+            autoplayTimeout: 2000,  // Autoplay interval in milliseconds (2 seconds)
+            autoplayHoverPause: true,  // Pause on hover
+            nav: true,  // Show navigation arrows
+            dots: false,  // Hide pagination dots
+            responsive: {
+                0: {
+                    items: 1  // Display 1 item on small screens
+                },
+                600: {
+                    items: 2  // Display 2 items on medium screens
+                },
+                1000: {
+                    items: 4  // Display 4 items on large screens
+                }
+            }
+        });
+    });
+</script>
 
-
-    {% endblock content %}
+<!-- Initialize Counter-Up -->
+<script>
+    $(document).ready(function(){
+        // Initialize Counter-Up
+        $('[data-toggle="counter-up"]').counterUp({
+            delay: 10,  // Delay in milliseconds between each increment
+            time: 4000  // Total duration of the animation in milliseconds
+        });
+    });
+</script>
+{% endblock content %}

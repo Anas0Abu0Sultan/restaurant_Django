@@ -12,8 +12,42 @@ urlpatterns = [
     path('contact/',views.contact,name='contact'),
 
     path('add_to_cart/', views.add_to_cart, name='add_to_cart'),
-    path('cart/', views.cart, name='cart'),
+    path('order/', views.cart, name='cart'),
     path('update_cart_item/<int:item_id>/', views.update_cart_item, name='update_cart_item'),
     path('remove_cart_item/<int:item_id>/', views.remove_cart_item, name='remove_cart_item'),
+
+    path('dashboard/', views.dashboard, name='dashboard'),
+    
+ 
+    # Drinks
+    path('add-drink/', views.add_drink, name='add_drinks'),
+    path('edit-drink/<int:drink_id>/', views.edit_drink, name='edit_drink'),
+    path('delete-drink/<int:drink_id>/', views.delete_drink, name='delete_drink'),
+
+    # Salads
+    path('add-salad/', views.add_salad, name='add_salads'),
+    path('edit-salad/<int:salad_id>/', views.edit_salad, name='edit_salad'),
+    path('delete-salad/<int:salad_id>/', views.delete_salad, name='delete_salad'),
+
+    # Meals
+    path('add-meal/', views.add_meal, name='add_meals'),
+    path('edit-meal/<int:meal_id>/', views.edit_meal, name='edit_meal'),
+    path('delete-meal/<int:meal_id>/', views.delete_meal, name='delete_meal'),
+
+    # Sandwiches
+    path('add-sandwich/', views.add_sandwich, name='add_sandwiches'),
+    path('edit-sandwich/<int:sandwich_id>/', views.edit_sandwich, name='edit_sandwiche'),
+    path('delete-sandwich/<int:sandwich_id>/', views.delete_sandwich, name='delete_sandwiche'),
+
+    # Grills
+    path('add-grill/', views.add_grill, name='add_grills'),
+    path('edit-grill/<int:grill_id>/', views.edit_grill, name='edit_grill'),
+    path('delete-grill/<int:grill_id>/', views.delete_grill, name='delete_grill'),
+
+    # Sweets
+    path('add-sweet/', views.add_sweet, name='add_sweets'),
+    path('edit-sweet/<int:sweet_id>/', views.edit_sweet, name='edit_sweet'),
+    path('delete-sweet/<int:sweet_id>/', views.delete_sweet, name='delete_sweet'),
 ]
+
 

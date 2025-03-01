@@ -2,7 +2,17 @@
 {% load static %}
 
 {% block content %}
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Star Restaurent</title>
+    <!-- Owl Carousel CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+</head>
+<body>
         <!-- Service Start -->
         <div class="container-xxl py-5">
             <div class="container">
@@ -34,4 +44,67 @@
         </div>
         <!-- Service End -->
 
+
+
+
+
+
+<!-- Testimonial Start -->
+<div class="container-xxl py-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="container">
+        <div class="text-center">
+            <h5 class="section-title ff-secondary text-center text-primary fw-normal">Testimonial</h5>
+            <h1 class="mb-5">Our Clients Say!!!</h1>
+        </div>
+        <div class="owl-carousel testimonial-carousel">
+            {% for comment in comments %}
+            <div class="testimonial-item bg-transparent border rounded p-4">
+                <i class="fa fa-quote-left fa-2x text-primary mb-3"></i>
+                <p>{{ comment.text }}</p>
+                <div class="d-flex align-items-center">
+                    <img class="img-fluid flex-shrink-0 rounded-circle" src="{{ comment.user.account.image.url }}" style="width: 50px; height: 50px;">
+                    <div class="ps-3">
+                        <h5 class="mb-1">{{ comment.user.username }}</h5>
+                        <small>{{ comment.user.account.job_title }}</small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<!-- Testimonial End -->
+
+    <!-- jQuery (required for Owl Carousel) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Owl Carousel JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+
+    <!-- Initialize Owl Carousel -->
+    <script>
+        $(document).ready(function(){
+            $(".testimonial-carousel").owlCarousel({
+                items: 1,  // Number of items to display at a time
+                loop: true,  // Infinite loop
+                autoplay: true,  // Autoplay
+                autoplayTimeout: 5000,  // Autoplay interval in milliseconds
+                nav: true,  // Show navigation arrows
+                dots: true,  // Show pagination dots
+                responsive: {
+                    0: {
+                        items: 1
+                    },
+                    600: {
+                        items: 2
+                    },
+                    1000: {
+                        items: 3
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
 {% endblock content %}

@@ -2,60 +2,68 @@
 {% load static %}
 
 {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Star Restaurant</title>
 
+    <!-- Owl Carousel CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+
+    <!-- Animate.css for wow animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
 <body>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Waypoints -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+
+    <!-- Counter-Up -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Counter-Up/1.0.0/jquery.counterup.min.js"></script>
+
+    <!-- wow.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+    <script>
+        // Initialize wow.js
+        new WOW().init();
+    </script>
+
     <div class="container-xxl bg-white p-0">
-        {% comment %} <!-- Spinner Start -->
-        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
-        </div>
-        <!-- Spinner End --> {% endcomment %}
-
-
-
-
- <!-- Service Start -->
- <div class="container-xxl py-5">
-    <div class="container">
-        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-            <h5 class="section-title ff-secondary text-center text-primary fw-normal">Our Services</h5>
-            <h1 class="mb-5">Explore Our Services</h1>
-        </div>
-
-        <!-- Row Wrapper -->
-        <div class="row g-4">
-            {% for service in services %}
-            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
-                <div class="service-item rounded pt-3">
-                    <div class="p-4">
-                        <i class="{{ service.text_icon }}"></i>
-                        <h5>{{ service.name }}</h5>
-                        <p>{{ service.description }}</p>
-                    </div>
+        <!-- Service Start -->
+        <div class="container-xxl py-5">
+            <div class="container">
+                <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+                    <h5 class="section-title ff-secondary text-center text-primary fw-normal">Our Services</h5>
+                    <h1 class="mb-5">Explore Our Services</h1>
                 </div>
+
+                <!-- Row Wrapper -->
+                <div class="row g-4">
+                    {% for service in services %}
+                    <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="service-item rounded pt-3">
+                            <div class="p-4">
+                                <i class="{{ service.text_icon }}"></i>
+                                <h5>{{ service.name }}</h5>
+                                <p>{{ service.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if forloop.counter|divisibleby:4 and not forloop.last %}<p></p>
+                    </div><div class="row g-4"> <!-- Close the current row and start a new one -->
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                <!-- End Row Wrapper -->
             </div>
-
-            {% if forloop.counter|divisibleby:4 and not forloop.last %}<p></p>
-            </div><div class="row g-4"> <!-- Close the current row and start a new one -->
-            {% endif %}
-            {% endfor %}
         </div>
-        <!-- End Row Wrapper -->
-    </div>
-</div>
-<!-- Service End -->
-
-
-
-
-
-
-
-
-
-        
+        <!-- Service End -->
 
         <!-- About Start -->
         <div class="container-xxl py-5">
@@ -70,7 +78,6 @@
                             {% endfor %}
                         </div>
                     </div>
-
 
                     <div class="col-lg-6">
                         <h5 class="section-title ff-secondary text-start text-primary fw-normal">About Us</h5>
@@ -99,19 +106,10 @@
                         </div>
                         <a class="btn btn-primary py-3 px-5 mt-2" href="{% url 'restaurant_app:about' %}">Read More</a>
                     </div>
-
-
                 </div>
             </div>
         </div>
         <!-- About End -->
-
-
-
-
-
-
-
 
         <!-- Menu Start -->
         <div class="container-xxl py-5"> 
@@ -160,52 +158,46 @@
                         </li>
                     </ul>
                     <a href="{% url 'restaurant_app:menu' category='choose_as_you_like' %}">
-
-         <div id="menu-content" class="row g-4">
-            <!-- Left Column (First Half of Items) -->
-            <div class="col-lg-6">
-                {% for item in first_half %}
-                <div class="d-flex align-items-center mb-4">
-                    <img class="flex-shrink-0 img-fluid rounded" src="{{ item.image.url }}" alt="{{ item.name }}" style="width: 80px;">
-                    <div class="w-100 d-flex flex-column text-start ps-4">
-                        <h5 class="d-flex justify-content-between border-bottom pb-2">
-                            <span>{{ item.name }}</span>
-                            <span class="text-primary">${{ item.price }}</span>
-                        </h5>
-                        <small class="fst-italic">{{ item.description }}</small>
-                    </div>
+                        <div id="menu-content" class="row g-4">
+                            <!-- Left Column (First Half of Items) -->
+                            <div class="col-lg-6">
+                                {% for item in first_half %}
+                                <div class="d-flex align-items-center mb-4">
+                                    <img class="flex-shrink-0 img-fluid rounded" src="{{ item.image.url }}" alt="{{ item.name }}" style="width: 80px;">
+                                    <div class="w-100 d-flex flex-column text-start ps-4">
+                                        <h5 class="d-flex justify-content-between border-bottom pb-2">
+                                            <span>{{ item.name }}</span>
+                                            <span class="text-primary">${{ item.price }}</span>
+                                        </h5>
+                                        <small class="fst-italic">{{ item.description }}</small>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        
+                            <!-- Right Column (Second Half of Items) -->
+                            <div class="col-lg-6">
+                                {% for item in second_half %}
+                                <div class="d-flex align-items-center mb-4">
+                                    <img class="flex-shrink-0 img-fluid rounded" src="{{ item.image.url }}" alt="{{ item.name }}" style="width: 80px;">
+                                    <div class="w-100 d-flex flex-column text-start ps-4">
+                                        <h5 class="d-flex justify-content-between border-bottom pb-2">
+                                            <span>{{ item.name }}</span>
+                                            <span class="text-primary">
+                                                ${{ item.small_price|default:item.price }}
+                                            </span>
+                                        </h5>
+                                        <small class="fst-italic">{{ item.description }}</small>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </a>
                 </div>
-                {% endfor %}
-            </div>
-        
-            <!-- Right Column (Second Half of Items) -->
-            <div class="col-lg-6">
-                {% for item in second_half %}
-                <div class="d-flex align-items-center mb-4">
-                    <img class="flex-shrink-0 img-fluid rounded" src="{{ item.image.url }}" alt="{{ item.name }}" style="width: 80px;">
-                    <div class="w-100 d-flex flex-column text-start ps-4">
-                        <h5 class="d-flex justify-content-between border-bottom pb-2">
-                            <span>{{ item.name }}</span>
-                            <span class="text-primary">${{ item.price }}</span>
-                        </h5>
-                        <small class="fst-italic">{{ item.description }}</small>
-                    </div>
-                </div>
-                {% endfor %}
             </div>
         </div>
-    </a>
-                </div>
-            
-            </div>
-        </div>
-
         <!-- Menu End -->
-
-
-
-
-
 
         <!-- Reservation Start -->
         <div class="container-xxl py-5 px-0 wow fadeInUp" data-wow-delay="0.1s">
@@ -286,42 +278,34 @@
         </div>
         <!-- Reservation Start -->
 
-
-
-
-
         <!-- Team Start -->
-
-<!-- Team Start -->
-<div class="container-xxl pt-5 pb-3">
-    <div class="container">
-        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-            <h5 class="section-title ff-secondary text-center text-primary fw-normal">Team Members</h5>
-            <h1 class="mb-5">Our Master Chefs</h1>
-        </div>
-        <div class="row g-4">
-            {% for chef in chefs %}
-                <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="team-item text-center rounded overflow-hidden">
-                        <div class="rounded-circle overflow-hidden m-4">
-                            <img class="img-fluid" src="{{ chef.image.url }}" alt="">
-                        </div>
-                        <h5 class="mb-0">{{ chef.name }}</h5>
-                        <small>{{ chef.description }}</small>
-                        <div class="d-flex justify-content-center mt-3">
-                            <a class="btn btn-square btn-primary mx-1" href="{{ chef.facebook }}"><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-instagram"></i></a>
-                        </div>
-                    </div>
+        <div class="container-xxl pt-5 pb-3">
+            <div class="container">
+                <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+                    <h5 class="section-title ff-secondary text-center text-primary fw-normal">Team Members</h5>
+                    <h1 class="mb-5">Our Master Chefs</h1>
                 </div>
-            {% endfor %}
+                <div class="row g-4">
+                    {% for chef in chefs %}
+                        <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                            <div class="team-item text-center rounded overflow-hidden">
+                                <div class="rounded-circle overflow-hidden m-4">
+                                    <img class="img-fluid" src="{{ chef.image.url }}" alt="">
+                                </div>
+                                <h5 class="mb-0">{{ chef.name }}</h5>
+                                <small>{{ chef.description }}</small>
+                                <div class="d-flex justify-content-center mt-3">
+                                    <a class="btn btn-square btn-primary mx-1" href="{{ chef.facebook }}"><i class="fab fa-facebook-f"></i></a>
+                                    <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-twitter"></i></a>
+                                    <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-instagram"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
         <!-- Team End -->
-
-
-
-
 
         <!-- Testimonial Start -->
         <div class="container-xxl py-5 wow fadeInUp" data-wow-delay="0.1s">
@@ -331,61 +315,52 @@
                     <h1 class="mb-5">Our Clients Say!!!</h1>
                 </div>
                 <div class="owl-carousel testimonial-carousel">
+                    {% for comment in comments %}
                     <div class="testimonial-item bg-transparent border rounded p-4">
                         <i class="fa fa-quote-left fa-2x text-primary mb-3"></i>
-                        <p>Dolor et eos labore, stet justo sed est sed. Diam sed sed dolor stet amet eirmod eos labore diam</p>
+                        <p>{{ comment.text }}</p>
                         <div class="d-flex align-items-center">
-                            <img class="img-fluid flex-shrink-0 rounded-circle" src="img/testimonial-1.jpg" style="width: 50px; height: 50px;">
+                            <img class="img-fluid flex-shrink-0 rounded-circle" src="{{ comment.user.account.image.url }}" style="width: 50px; height: 50px;">
                             <div class="ps-3">
-                                <h5 class="mb-1">Client Name</h5>
-                                <small>Profession</small>
+                                <h5 class="mb-1">{{ comment.user.username }}</h5>
+                                <small>{{ comment.user.account.job_title }}</small>
                             </div>
                         </div>
                     </div>
-                    <div class="testimonial-item bg-transparent border rounded p-4">
-                        <i class="fa fa-quote-left fa-2x text-primary mb-3"></i>
-                        <p>Dolor et eos labore, stet justo sed est sed. Diam sed sed dolor stet amet eirmod eos labore diam</p>
-                        <div class="d-flex align-items-center">
-                            <img class="img-fluid flex-shrink-0 rounded-circle" src="img/testimonial-2.jpg" style="width: 50px; height: 50px;">
-                            <div class="ps-3">
-                                <h5 class="mb-1">Client Name</h5>
-                                <small>Profession</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial-item bg-transparent border rounded p-4">
-                        <i class="fa fa-quote-left fa-2x text-primary mb-3"></i>
-                        <p>Dolor et eos labore, stet justo sed est sed. Diam sed sed dolor stet amet eirmod eos labore diam</p>
-                        <div class="d-flex align-items-center">
-                            <img class="img-fluid flex-shrink-0 rounded-circle" src="img/testimonial-3.jpg" style="width: 50px; height: 50px;">
-                            <div class="ps-3">
-                                <h5 class="mb-1">Client Name</h5>
-                                <small>Profession</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial-item bg-transparent border rounded p-4">
-                        <i class="fa fa-quote-left fa-2x text-primary mb-3"></i>
-                        <p>Dolor et eos labore, stet justo sed est sed. Diam sed sed dolor stet amet eirmod eos labore diam</p>
-                        <div class="d-flex align-items-center">
-                            <img class="img-fluid flex-shrink-0 rounded-circle" src="img/testimonial-4.jpg" style="width: 50px; height: 50px;">
-                            <div class="ps-3">
-                                <h5 class="mb-1">Client Name</h5>
-                                <small>Profession</small>
-                            </div>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
         <!-- Testimonial End -->
-        
-
-        
-
 
         <!-- Back to Top -->
         <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
     </div>
 
+    <!-- Initialize Owl Carousel -->
+    <script>
+        $(document).ready(function(){
+            $(".testimonial-carousel").owlCarousel({
+                items: 1,  // Number of items to display at a time
+                loop: true,  // Infinite loop
+                autoplay: true,  // Autoplay
+                autoplayTimeout: 5000,  // Autoplay interval in milliseconds
+                nav: true,  // Show navigation arrows
+                dots: true,  // Show pagination dots
+                responsive: {
+                    0: {
+                        items: 1
+                    },
+                    600: {
+                        items: 2
+                    },
+                    1000: {
+                        items: 3
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
 {% endblock content %}
