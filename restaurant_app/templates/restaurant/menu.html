@@ -2,6 +2,36 @@
 {% load custom_filters %}
 
 {% block content %}
+<!-- Animate.css for wow animations -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+<!-- wow.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+<script>
+    // Initialize wow.js
+    new WOW().init();
+</script>
+
+    <!-- Owl Carousel CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+
+    <!-- Animate.css for wow animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+<body>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Owl Carousel JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+
+    <!-- wow.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+    <script>
+        // Initialize wow.js
+        new WOW().init();
+    </script>
 <!-- Menu Start -->
 <div class="container-xxl py-5">
     <div class="container">
@@ -75,30 +105,23 @@
             <!-- Left Column (First Half of Items) -->
             <div class="col-lg-6">
                 {% for item in first_half %}
-                <div class="d-flex align-items-center mb-4">
+                <div class="d-flex align-items-center mb-4 wow fadeInUp" data-wow-delay="0.1s">
                     <img class="flex-shrink-0 img-fluid rounded" src="{{ item.image.url }}" alt="{{ item.name }}" style="width: 80px;">
                     <div class="w-100 d-flex flex-column text-start ps-4">
                         <h5 class="d-flex justify-content-between border-bottom pb-2">
                             <span>{{ item.name }}</span>
-
-
-                            
                             <span class="text-primary">
                                 ${{ item.small_price|default:item.price }}
                             </span>
-
-
-
                         </h5>
                         <small class="fst-italic">{{ item.description }}</small>
                         <div class="mt-2">
                             <button class="btn btn-sm btn-primary add-to-cart-btn" 
-    data-id="{{ item.id }}" 
-    data-type="{{ item|class_name }}" 
-    data-has-size="{% if item|class_name == 'Drinks' or item|class_name == 'Salads' %}true{% else %}false{% endif %}">
-    <i class="fas fa-clipboard-list"></i> Add to Order
-
-</button>
+                                data-id="{{ item.id }}" 
+                                data-type="{{ item|class_name }}" 
+                                data-has-size="{% if item|class_name == 'Drinks' or item|class_name == 'Salads' %}true{% else %}false{% endif %}">
+                                <i class="fas fa-clipboard-list"></i> Add to Order
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -108,19 +131,14 @@
             <!-- Right Column (Second Half of Items) -->
             <div class="col-lg-6">
                 {% for item in second_half %}
-                <div class="d-flex align-items-center mb-4">
+                <div class="d-flex align-items-center mb-4 wow fadeInUp" data-wow-delay="0.1s">
                     <img class="flex-shrink-0 img-fluid rounded" src="{{ item.image.url }}" alt="{{ item.name }}" style="width: 80px;">
                     <div class="w-100 d-flex flex-column text-start ps-4">
                         <h5 class="d-flex justify-content-between border-bottom pb-2">
                             <span>{{ item.name }}</span>
-
-                            
                             <span class="text-primary">
                                 ${{ item.small_price|default:item.price }}
                             </span>
-
-
-
                         </h5>
                         <small class="fst-italic">{{ item.description }}</small>
                         <div class="mt-2">
@@ -138,7 +156,7 @@
         </div>
     </div>
 </div>
-
+<!-- Menu End -->
 
 <!-- Add to Cart Modal -->
 <div class="modal fade" id="addToCartModal" tabindex="-1" aria-labelledby="addToCartModalLabel" aria-hidden="true">
@@ -205,5 +223,5 @@
             });
         });
     });
-    </script>
+</script>
 {% endblock %}
