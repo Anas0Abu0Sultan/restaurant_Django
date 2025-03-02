@@ -34,19 +34,41 @@
             <h5 class="section-title ff-secondary text-center text-primary fw-normal">Contact Us</h5>
             <h1 class="mb-5">Contact For Any Query</h1>
         </div>
+
+
         <div class="row g-4">
             <div class="col-12">
                 <div class="row gy-4">
+
+
+                    
                     <!-- Booking Email Section -->
                     <div class="col-md-4 wow fadeInUp" data-wow-delay="0.2s">
-                        <h5 class="section-title ff-secondary fw-normal text-start text-primary">Booking</h5>
-                        <p><i class="fa fa-envelope-open text-primary me-2"></i>{{contact_emails.booking_email}}</p>
-                    </div>
+                        <h5 class="section-title ff-secondary fw-normal text-start text-primary">WhatsApp</h5>
+                        <p>
+                            <a href="https://wa.me/{{ contact_emails.whatsapp }}" target="_blank" class="text-decoration-none">
+                                <i class="fab fa-whatsapp text-success me-2"></i>Chat on WhatsApp
+                            </a>
+                        </p>
+            </div>
+
+
+
                     <!-- General Email Section -->
                     <div class="col-md-4 wow fadeInUp" data-wow-delay="0.3s">
-                        <h5 class="section-title ff-secondary fw-normal text-start text-primary">General</h5>
-                        <p><i class="fa fa-envelope-open text-primary me-2"></i>{{contact_emails.general_email}}</p>
-                    </div>
+                        <h5 class="section-title ff-secondary fw-normal text-start text-primary">Telegram</h5>
+                        <p>
+                            {% if contact_emails.telegram %}
+                                <a href="https://t.me/{{ contact_emails.telegram }}" target="_blank" class="text-decoration-none">
+                                    <i class="fab fa-telegram text-primary me-2"></i>Chat on Telegram
+                                </a>
+                            {% else %}
+                                <p class="text-muted">No Telegram contact available.</p>
+                            {% endif %}
+                        </p>                    </div>
+
+
+
                     <!-- Technical Email Section -->
                     <div class="col-md-4 wow fadeInUp" data-wow-delay="0.4s">
                         <h5 class="section-title ff-secondary fw-normal text-start text-primary">Technical</h5>
@@ -55,6 +77,9 @@
                 </div>
             </div>
 
+
+
+            
             <!-- Google Map Section with Wow Animation -->
             <div class="col-md-6 wow fadeIn" data-wow-delay="0.1s">
                 <iframe class="position-relative rounded w-100 h-100"

@@ -1,0 +1,45 @@
+{% extends 'restaurant/base_other.html' %}  <!-- Extend your base template -->
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container">
+    <h2>Add a Comment</h2>
+    
+    <!-- Display form errors at the top -->
+    {% if form.errors %}
+        <div class="alert alert-danger">
+            <strong>Error!</strong> Please correct the following issues:
+            <ul>
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <!-- Comment Form -->
+    <form method="post" novalidate>
+        {% csrf_token %}
+        
+        <!-- Text Field -->
+        <div class="form-group">
+            <label for="{{ form.text.id_for_label }}">Your Comment:</label>
+            {% render_field form.text class="form-control" placeholder="Write your comment here..." rows="4" %}
+            
+            <!-- Field-specific errors -->
+            {% if form.text.errors %}
+                <div class="invalid-feedback">
+                    {% for error in form.text.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary">Submit Comment</button>
+    </form>
+</div>
+{% endblock %}

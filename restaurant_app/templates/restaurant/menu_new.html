@@ -1,0 +1,256 @@
+{% extends 'restaurant/base_other.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<!-- Animate.css for wow animations -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+<!-- wow.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+<script>
+    // Initialize wow.js
+    new WOW().init();
+</script>
+
+<!-- Menu Start -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h5 class="section-title ff-secondary text-center text-primary fw-normal">Food Menu</h5>
+            <h1 class="mb-5">{{ name_page|default:"Most Popular Items" }}</h1>
+        </div>
+
+        <!-- Tab Navigation -->
+        <ul class="nav nav-tabs d-inline-flex justify-content-center border-bottom mb-5" id="menuTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link {% if category == 'Drinks' %}active{% endif %}" id="drinks-tab" data-bs-toggle="tab" data-bs-target="#drinks" type="button" role="tab" aria-controls="drinks" aria-selected="{% if category == 'Drinks' %}true{% else %}false{% endif %}">
+                    <i class="fa fa-coffee fa-2x text-primary"></i>
+                    <div class="ps-3">
+                        <small class="text-body">Refreshing</small>
+                        <h6 class="mt-n1 mb-0">Drinks</h6>
+                    </div>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link {% if category == 'Meals' %}active{% endif %}" id="meals-tab" data-bs-toggle="tab" data-bs-target="#meals" type="button" role="tab" aria-controls="meals" aria-selected="{% if category == 'Meals' %}true{% else %}false{% endif %}">
+                    <i class="fa fa-hamburger fa-2x text-primary"></i>
+                    <div class="ps-3">
+                        <small class="text-body">Hearty</small>
+                        <h6 class="mt-n1 mb-0">Meals</h6>
+                    </div>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link {% if category == 'Sandwiches' %}active{% endif %}" id="sandwiches-tab" data-bs-toggle="tab" data-bs-target="#sandwiches" type="button" role="tab" aria-controls="sandwiches" aria-selected="{% if category == 'Sandwiches' %}true{% else %}false{% endif %}">
+                    <i class="fa fa-bread-slice fa-2x text-primary"></i>
+                    <div class="ps-3">
+                        <small class="text-body">Tasty</small>
+                        <h6 class="mt-n1 mb-0">Sandwiches</h6>
+                    </div>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link {% if category == 'Grills' %}active{% endif %}" id="grills-tab" data-bs-toggle="tab" data-bs-target="#grills" type="button" role="tab" aria-controls="grills" aria-selected="{% if category == 'Grills' %}true{% else %}false{% endif %}">
+                    <i class="fa fa-fire fa-2x text-primary"></i>
+                    <div class="ps-3">
+                        <small class="text-body">Grilled</small>
+                        <h6 class="mt-n1 mb-0">Grills</h6>
+                    </div>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link {% if category == 'Sweets' %}active{% endif %}" id="sweets-tab" data-bs-toggle="tab" data-bs-target="#sweets" type="button" role="tab" aria-controls="sweets" aria-selected="{% if category == 'Sweets' %}true{% else %}false{% endif %}">
+                    <i class="fa fa-ice-cream fa-2x text-primary"></i>
+                    <div class="ps-3">
+                        <small class="text-body">Sweet</small>
+                        <h6 class="mt-n1 mb-0">Sweets</h6>
+                    </div>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link {% if category == 'Salads' %}active{% endif %}" id="salads-tab" data-bs-toggle="tab" data-bs-target="#salads" type="button" role="tab" aria-controls="salads" aria-selected="{% if category == 'Salads' %}true{% else %}false{% endif %}">
+                    <i class="fa fa-leaf fa-2x text-primary"></i>
+                    <div class="ps-3">
+                        <small class="text-body">Healthy</small>
+                        <h6 class="mt-n1 mb-0">Salads</h6>
+                    </div>
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="menuTabsContent">
+            <!-- Drinks Tab -->
+            <div class="tab-pane fade {% if category == 'Drinks' %}show active{% endif %}" id="drinks" role="tabpanel" aria-labelledby="drinks-tab">
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        {% for item in drinks|slice:":5" %}
+                        <div class="d-flex align-items-center mb-4 wow fadeInUp" data-wow-delay="0.1s">
+                            <img class="flex-shrink-0 img-fluid rounded" src="{{ item.image.url }}" alt="{{ item.name }}" style="width: 80px;">
+                            <div class="w-100 d-flex flex-column text-start ps-4">
+                                <h5 class="d-flex justify-content-between border-bottom pb-2">
+                                    <span>{{ item.name }}</span>
+                                    <span class="text-primary">${{ item.price }}</span>
+                                </h5>
+                                <small class="fst-italic">{{ item.description }}</small>
+                                <div class="mt-2">
+                                    <button class="btn btn-sm btn-primary add-to-cart-btn" 
+                                        data-id="{{ item.id }}" 
+                                        data-type="{{ item|class_name }}" 
+                                        data-has-size="true">
+                                        <i class="fas fa-clipboard-list"></i> Add to Order
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-lg-6">
+                        {% for item in drinks|slice:"5:" %}
+                        <div class="d-flex align-items-center mb-4 wow fadeInUp" data-wow-delay="0.1s">
+                            <img class="flex-shrink-0 img-fluid rounded" src="{{ item.image.url }}" alt="{{ item.name }}" style="width: 80px;">
+                            <div class="w-100 d-flex flex-column text-start ps-4">
+                                <h5 class="d-flex justify-content-between border-bottom pb-2">
+                                    <span>{{ item.name }}</span>
+                                    <span class="text-primary">${{ item.price }}</span>
+                                </h5>
+                                <small class="fst-italic">{{ item.description }}</small>
+                                <div class="mt-2">
+                                    <button class="btn btn-sm btn-primary add-to-cart-btn" 
+                                        data-id="{{ item.id }}" 
+                                        data-type="{{ item|class_name }}" 
+                                        data-has-size="true">
+                                        <i class="fas fa-clipboard-list"></i> Add to Order
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meals Tab -->
+            <div class="tab-pane fade {% if category == 'Meals' %}show active{% endif %}" id="meals" role="tabpanel" aria-labelledby="meals-tab">
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        {% for item in meals|slice:":5" %}
+                        <div class="d-flex align-items-center mb-4 wow fadeInUp" data-wow-delay="0.1s">
+                            <img class="flex-shrink-0 img-fluid rounded" src="{{ item.image.url }}" alt="{{ item.name }}" style="width: 80px;">
+                            <div class="w-100 d-flex flex-column text-start ps-4">
+                                <h5 class="d-flex justify-content-between border-bottom pb-2">
+                                    <span>{{ item.name }}</span>
+                                    <span class="text-primary">${{ item.price }}</span>
+                                </h5>
+                                <small class="fst-italic">{{ item.description }}</small>
+                                <div class="mt-2">
+                                    <button class="btn btn-sm btn-primary add-to-cart-btn" 
+                                        data-id="{{ item.id }}" 
+                                        data-type="{{ item|class_name }}" 
+                                        data-has-size="false">
+                                        <i class="fas fa-clipboard-list"></i> Add to Order
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-lg-6">
+                        {% for item in meals|slice:"5:" %}
+                        <div class="d-flex align-items-center mb-4 wow fadeInUp" data-wow-delay="0.1s">
+                            <img class="flex-shrink-0 img-fluid rounded" src="{{ item.image.url }}" alt="{{ item.name }}" style="width: 80px;">
+                            <div class="w-100 d-flex flex-column text-start ps-4">
+                                <h5 class="d-flex justify-content-between border-bottom pb-2">
+                                    <span>{{ item.name }}</span>
+                                    <span class="text-primary">${{ item.price }}</span>
+                                </h5>
+                                <small class="fst-italic">{{ item.description }}</small>
+                                <div class="mt-2">
+                                    <button class="btn btn-sm btn-primary add-to-cart-btn" 
+                                        data-id="{{ item.id }}" 
+                                        data-type="{{ item|class_name }}" 
+                                        data-has-size="false">
+                                        <i class="fas fa-clipboard-list"></i> Add to Order
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add more tabs for Sandwiches, Grills, Sweets, and Salads following the same pattern -->
+        </div>
+    </div>
+</div>
+<!-- Menu End -->
+
+<!-- Add to Cart Modal -->
+<div class="modal fade" id="addToCartModal" tabindex="-1" aria-labelledby="addToCartModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addToCartModalLabel">Add to Order</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addToCartForm" method="post" action="{% url 'restaurant_app:add_to_cart' %}">
+                    {% csrf_token %}
+                    <input type="hidden" id="foodId" name="object_id">
+                    <input type="hidden" id="foodType" name="content_type">
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Quantity</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" min="1" value="1" required>
+                    </div>
+                    <div class="mb-3" id="sizeField" style="display: none;">
+                        <label for="size" class="form-label">Size</label>
+                        <select class="form-select" id="size" name="size">
+                            <option value="SM">Small</option>
+                            <option value="ME">Medium</option>
+                            <option value="LA">Large</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add to Order</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript to Handle Modal and Form Submission -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+        const addToCartModal = new bootstrap.Modal(document.getElementById('addToCartModal'));
+        const foodIdInput = document.getElementById('foodId');
+        const foodTypeInput = document.getElementById('foodType');
+        const sizeField = document.getElementById('sizeField');
+        const sizeSelect = document.getElementById('size');
+    
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const itemId = button.getAttribute('data-id');
+                const itemType = button.getAttribute('data-type');
+                const hasSize = button.getAttribute('data-has-size') === 'true';
+    
+                foodIdInput.value = itemId;
+                foodTypeInput.value = itemType;
+    
+                if (hasSize) {
+                    sizeField.style.display = 'block';
+                    sizeSelect.required = true;
+                } else {
+                    sizeField.style.display = 'none';
+                    sizeSelect.required = false;
+                }
+    
+                addToCartModal.show();
+            });
+        });
+    });
+</script>
+{% endblock %}
