@@ -112,10 +112,16 @@ class Sweets(Food):
 
 
 class Comment(models.Model):
+    STATUS_CHOICES=[
+        ('pending','Pending'),
+        ('approved','Approved'),
+        ('rejected','Rejected'),
+
+    ]
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
     text = models.TextField(max_length=4000, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
-
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     def __str__(self):
         return f'Comment by {self.user.username} on {self.created_at}'
 
@@ -186,6 +192,11 @@ class Contact(models.Model):
     booking_email = models.EmailField(default='anas227sultan@gmail.com')
     general_email = models.EmailField(default='anas227sultan@gmail.com')
     technical_email = models.EmailField(default='anas227sultan@gmail.com')
+    whatsapp = models.CharField(max_length=15, default='+972594073606')
+    telegram = models.CharField(max_length=50, blank=True, null=True)
+
+    def __str__(self):
+        return f"Contact - Booking: {self.booking_email}, WhatsApp: {self.whatsapp}"
 
 #                             <<<<<     rest_deta    >>>>>
 

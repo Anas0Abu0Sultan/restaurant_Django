@@ -9,6 +9,7 @@ urlpatterns = [
     path('about/',views.about,name='about'),
     path('services/',views.service,name='services'),
     path('menu/<str:category>/',views.menu,name='menu'),
+    path('m/<str:category>/',views.menu_new,name='menu_new'),
     path('contact/',views.contact,name='contact'),
 
     path('add_to_cart/', views.add_to_cart, name='add_to_cart'),
@@ -48,6 +49,19 @@ urlpatterns = [
     path('add-sweet/', views.add_sweet, name='add_sweets'),
     path('edit-sweet/<int:sweet_id>/', views.edit_sweet, name='edit_sweet'),
     path('delete-sweet/<int:sweet_id>/', views.delete_sweet, name='delete_sweet'),
+
+    path('add-chef/',views.add_chef,name='add_chef'),
+    path('edit-chef/<int:chef_id>/',views.edit_chef,name='edit_chef'),
+    path('delete-chef/<int:chef_id>/',views.delete_chef,name='delete_chef'),
+
+    path('add-comment/',views.add_comment,name='add_comment'),
+    path('delete-comment/<int:comment_id>/',views.delete_comment,name='delete_comment'),
+    path('approve-comment/<int:comment_id>/', views.update_comment_status, {'status': 'approved'}, name='approve_comment'),
+    path('reject-comment/<int:comment_id>/', views.update_comment_status, {'status': 'rejected'}, name='reject_comment'),
+
+    path('edit-contact/<int:contact_id>/',views.edit_contact,name='edit_contact'),
+    path('edit-rest-detail/', views.edit_rest_detail, name='edit_rest_detail'),
+
 ]
 
 

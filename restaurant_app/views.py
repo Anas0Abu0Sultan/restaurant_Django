@@ -14,6 +14,7 @@ from random import shuffle
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
+from .forms import DrinkForm, SaladForm, MealForm, SandwichForm, GrillForm, SweetForm,ChefForm,CommentForm,ContactUsForm,RestDetailForm
 
 #                                       <<<<<<     test    >>>>>
 def test(request):
@@ -38,7 +39,8 @@ def home(request):
     sweets = Sweets.objects.all()
     salads = Salads.objects.all()
     # clients = Clients.objects.all()
-    comments = Comment.objects.all().order_by('-created_at')
+    comments = Comment.objects.filter(status='approved').order_by('-created_at')
+
     chefs = Chefs.objects.all()
     if chefs.count()>=4:
         chefs = random.sample(list(chefs), 4)
@@ -113,7 +115,7 @@ def service(request):
     services = Services.objects.all()
     rest_detail = get_object_or_404(Rest_detail,pk =1)
     breadcrumb_section_url = reverse('restaurant_app:about')
-    comments = Comment.objects.all().order_by('-created_at')
+    comments = Comment.objects.filter(status='approved').order_by('-created_at')
 
 
     context = {
@@ -211,6 +213,34 @@ def menu(request, category):
 
         }
     return render(request,'restaurant/menu.html',context)
+
+
+
+
+
+def menu_new(request, category):
+    drinks = Drinks.objects.all().order_by('-price')
+    meals = Meals.objects.all().order_by('-price')
+    sandwiches = Sandwiches.objects.all().order_by('-price')
+    grills = Grills.objects.all().order_by('-price')
+    sweets = Sweets.objects.all().order_by('-price')
+    salads = Salads.objects.all().order_by('-price')
+    rest_detail = get_object_or_404(Rest_detail, pk=1)
+
+    context = {
+        'drinks': drinks,
+        'meals': meals,
+        'sandwiches': sandwiches,
+        'grills': grills,
+        'sweets': sweets,
+        'salads': salads,
+        'category': category,
+        'rest_detail': rest_detail,
+    }
+    return render(request, 'restaurant/menu_new.html', context)
+
+
+
 
 
 
@@ -456,7 +486,11 @@ def dashboard(request):
     sandwiches = Sandwiches.objects.all()
     grills = Grills.objects.all()
     sweets = Sweets.objects.all()
-
+    chefs = Chefs.objects.all()
+    pending_comments = Comment.objects.filter(status='pending')
+    comments = Comment.objects.filter(status='approved')
+    rejected_comments = Comment.objects.filter(status='rejected')
+    contact = get_object_or_404(Contact,id=1)
     # Combine all food items into a single list
     food_items = list(drinks) + list(salads) + list(meals) + list(sandwiches) + list(grills) + list(sweets)
 
@@ -480,13 +514,17 @@ def dashboard(request):
         'breadcrumb_section': 'Menu',
         'breadcrumb_active': 'Dashboard',
         'Dashboard':'active',
+        'chefs':chefs,
+        'pending_comments':pending_comments,
+        'comments':comments,
+        'rejected_comments':rejected_comments,
+        'contact':contact,
     }
     return render(request, 'restaurant/dashboard.html', context)
 
 
 #                                       <<<<<<     Dashboard  Drinks     >>>>>
 
-from .forms import DrinkForm, SaladForm, MealForm, SandwichForm, GrillForm, SweetForm  # Create these forms
 @staff_member_required
 def add_drink(request):
     form = DrinkForm()
@@ -717,3 +755,118 @@ def delete_sweet(request, sweet_id):
     return redirect('restaurant_app:dashboard')
 
 
+
+#                                       <<<<<<     Dashboard  Chefs     >>>>>
+
+@staff_member_required
+def add_chef(request):
+    form = ChefForm()
+    if request.method == 'POST':
+        form = ChefForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Chef added successfully!")
+            return redirect('restaurant_app:dashboard')
+        else:
+            messages.error(request, "There was an error adding the chef.")
+    return render(request, 'restaurant/chef/add_chef.html', {'form': form})
+
+@staff_member_required
+def edit_chef(request,chef_id):
+    chef = get_object_or_404(Chefs, id=chef_id)
+    if request.method == 'POST':
+        form = ChefForm(request.POST, request.FILES, instance=chef)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Chef updated successfully!")
+            return redirect('restaurant_app:dashboard')
+        else:
+            messages.error(request, "There was an error updating the chef.")
+    form = ChefForm(instance=chef)
+    return render(request, 'restaurant/chef/edit_chef.html', {'form': form})
+
+@staff_member_required
+def delete_chef(request,chef_id):
+    chef = get_object_or_404(Chefs, id=chef_id)
+    chef.delete()
+    messages.success(request, "Chef deleted successfully!")
+    return redirect('restaurant_app:dashboard')
+
+#                                       <<<<<<     Dashboard  Comment     >>>>>
+
+
+@login_required
+def add_comment(request):
+    if request.method == 'POST':
+        form = CommentForm(request.POST)  
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.status = 'pending'  # Set status to pending
+            comment.save()
+            messages.success(request, 'Your comment has been submitted we will publish it soon.')
+            return redirect('restaurant_app:home')
+        else:
+            messages.error(request, "There was an error submitting your comment.")
+    else:
+        form = CommentForm()
+    return render(request, 'restaurant/comment/add_comment.html', {'form': form})
+       
+
+@staff_member_required
+def delete_comment(request,comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    comment.delete()
+    messages.success(request, "Comment deleted successfully!")
+    return redirect('restaurant_app:dashboard')
+
+@staff_member_required
+def update_comment_status(request, comment_id, status):
+    # Get the comment or return 404 if not found
+    comment = get_object_or_404(Comment, id=comment_id)
+    
+    # Update the status
+    comment.status = status
+    comment.save()
+    
+    # Notify the admin
+    messages.success(request, f'Comment status updated to {status}.')
+    return redirect('restaurant_app:dashboard')  # Redirect to the manage comments page
+
+
+@staff_member_required
+def edit_contact(request, contact_id):
+    contact = get_object_or_404(Contact, id=contact_id)
+    if request.method == 'POST':
+        form = ContactUsForm(request.POST, instance=contact)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Contat Us information updated successfully!.')
+            return redirect('restaurant_app:dashboard')  # Redirect to the dashboard
+        else:
+            messages.error(request, "Error in updateing the contact us.")
+    else:
+        form = ContactUsForm(instance=contact)
+    return render(request, 'restaurant/edit_contact.html', {'form': form})
+
+
+@staff_member_required
+def edit_rest_detail(request):
+    # Fetch the first Rest_detail object
+    rest_detail = Rest_detail.objects.first()
+    
+    if not rest_detail:
+        # If no Rest_detail object exists, create one with default values
+        rest_detail = Rest_detail.objects.create()
+
+    if request.method == 'POST':
+        # Bind the form to the POST data and the existing instance
+        form = RestDetailForm(request.POST, request.FILES, instance=rest_detail)
+        if form.is_valid():
+            form.save()  # Save the updated Rest_detail
+            return redirect('restaurant_app:dashboard')  # Redirect to the dashboard or another page
+    else:
+        # Display the form with the existing Rest_detail data
+        form = RestDetailForm(instance=rest_detail)
+    
+    return render(request, 'restaurant/edit_rest_detail.html', {'form': form})
