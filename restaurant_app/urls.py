@@ -62,6 +62,12 @@ urlpatterns = [
     path('edit-contact/<int:contact_id>/',views.edit_contact,name='edit_contact'),
     path('edit-rest-detail/', views.edit_rest_detail, name='edit_rest_detail'),
 
+    path('create-payment/', views.create_payment, name='create_payment'),
+    path('payment/success/', views.payment_success, name='payment_success'),
+    path('payment/cancel/', views.payment_cancel, name='payment_cancel'),
+
+    path('view_order/<int:order_id>/', views.view_order, name='view_order'),
+    path('delete_order/<int:order_id>/', views.delete_order, name='delete_order'),
 ]
 
 

@@ -1,0 +1,76 @@
+{% extends 'admin_templates/base_admin.html' %}
+{% block content %}
+<style>
+    /* Custom CSS for Order Details */
+.card-header {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+</style>
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">Order Details</h2>
+        </div>
+        <div class="card-body">
+            <!-- Order Information -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <p><strong>Order ID:</strong> {{ order.id }}</p>
+                    <p><strong>User:</strong> {{ order.user.username }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Total Price:</strong> ${{ order.total_price }}</p>
+                    <p><strong>Date:</strong> {{ order.created_at }}</p>
+                </div>
+            </div>
+
+            <!-- Items Table -->
+            <h3 class="mb-3">Items</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Item</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart_items %}
+                        <tr>
+                            <td>{{ item.food_item.name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>${{ item.item_price }}</td>
+                            <td>${{ item.total_price }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Back Button -->
+            <div class="text-center mt-4">
+                <a href="{% url 'restaurant_app:dashboard' %}" class="btn btn-primary">
+                    <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

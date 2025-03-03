@@ -84,3 +84,92 @@ def topping_view(request, cart_id):
 		"toppings" : pizza.toppings.all()
 		}
 	return render(request, "orders/topping.html", context)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from django.shortcuts import render,redirect,HttpResponse
+from app1.models import Category,Product,CartItem
+from django.contrib.auth import login as auth_login
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect
+import stripe
+from app1.payments import PaymentService
+from django.conf import settings
+
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+
+
+def payment_success(request):
+    return render(request, 'success.html')
+
+
+def process_payment(request):
+    cart_items = CartItem.objects.filter(user=request.user)
+    total = sum(cart_item.product.price * cart_item.quantity for cart_item in cart_items)
+
+    if request.method == 'POST':
+        # Retrieve the payment token from the request
+        token = request.POST.get('stripeToken')
+
+        try:
+            # Create a charge using Stripe
+            charge = stripe.Charge.create(
+                amount=int(total * 100),  # Stripe requires the amount in cents
+                currency='usd',
+                description='Payment for products',
+                source=token,
+            )
+
+            # If the charge is successful, complete the order and do necessary processing
+            if charge.status == 'succeeded':
+                # Clear the cart items or mark them as purchased
+
+                # Redirect to a success page or display a success message
+                return redirect('payment_success')
+
+        except stripe.error.CardError as e:
+            # Handle card errors and display an error message to the user
+            error = e.user_message
+
+    # Render the payment form with the total amount
+    context = {
+        'total': total
+    }
+    return render(request, 'payment.html', context)

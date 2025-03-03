@@ -1,0 +1,68 @@
+<!-- payment.html -->
+{% extends 'restaurant/base_other.html' %}  <!-- Extend your base template -->
+
+{% block content %}
+<!-- Custom CSS for the payment form -->
+<style>
+    .payment-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .payment-container h1 {
+        font-size: 2rem;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .payment-container p {
+        font-size: 1.2rem;
+        color: #555;
+        margin-bottom: 30px;
+    }
+
+    .stripe-button {
+        background-color: #6772e5 !important;  /* Stripe's default button color */
+        color: white !important;
+        border: none;
+        padding: 15px 30px;
+        font-size: 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .stripe-button:hover {
+        background-color: #5469d4 !important;  /* Darker shade on hover */
+    }
+
+    .stripe-button:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(103, 114, 229, 0.5);  /* Focus outline */
+    }
+</style>
+
+<div class="payment-container">
+    <h1>Payment</h1>
+    <p>Total Amount: ${{ total_price }}</p>
+
+    <form action="{% url 'restaurant_app:create_payment' %}" method="POST">
+        {% csrf_token %}
+        <script
+            src="https://checkout.stripe.com/checkout.js"
+            class="stripe-button"
+            data-key="{{ STRIPE_PUBLISHABLE_KEY }}"
+            data-amount="{{ total_price|floatformat:2 }}00"
+            data-currency="usd"
+            data-name="Your Restaurant"
+            data-description="Payment for products"
+            data-locale="auto">
+        </script>
+    </form>
+</div>
+{% endblock %}
