@@ -213,7 +213,7 @@
             </div>
             <div class="stat">
                 <h2>Total Sales</h2>
-                <p>${{ total_sales }}</p>
+                <p>${{ total_price_all_carts }}</p>
             </div>
             <div class="stat">
                 <h2>Total Items Sold</h2>
@@ -225,24 +225,72 @@
             </div>
         </div>
 
-        <!-- Tab Navigation -->
-        <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="food-tab" data-bs-toggle="tab" data-bs-target="#food" type="button" role="tab" aria-controls="food" aria-selected="true">Food Items</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments" type="button" role="tab" aria-controls="comments" aria-selected="false">Comments</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="chefs-tab" data-bs-toggle="tab" data-bs-target="#chefs" type="button" role="tab" aria-controls="chefs" aria-selected="false">Chefs</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="about-tab" data-bs-toggle="tab" data-bs-target="#about" type="button" role="tab" aria-controls="about" aria-selected="false">About Us</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Contact Us</button>
-            </li>
-        </ul>
+<!-- Tab Navigation -->
+<ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="food-tab" data-bs-toggle="tab" data-bs-target="#food" type="button" role="tab" aria-controls="food" aria-selected="true">Food Items</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments" type="button" role="tab" aria-controls="comments" aria-selected="false">Comments</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="chefs-tab" data-bs-toggle="tab" data-bs-target="#chefs" type="button" role="tab" aria-controls="chefs" aria-selected="false">Chefs</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="about-tab" data-bs-toggle="tab" data-bs-target="#about" type="button" role="tab" aria-controls="about" aria-selected="false">About Us</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Contact Us</button>
+    </li>
+    <!-- Add Orders Tab -->
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button" role="tab" aria-controls="orders" aria-selected="false">Orders</button>
+    </li>
+</ul>
+
+<!-- Tab Content -->
+<div class="tab-content" id="dashboardTabsContent">
+    <!-- Existing Tabs (Food, Comments, Chefs, About, Contact) -->
+
+ <!-- Orders Tab -->
+<div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
+    <h2 class="mt-4">Completed Orders</h2>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Username</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Total Price</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in completed_orders %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.user.username }}</td>
+                    <td>{{ order.user.first_name }}</td>
+                    <td>{{ order.user.last_name }}</td>
+                    <td>{{ order.user.email }}</td>
+                    <td>${{ order.total_price }}</td>
+                    <td>{{ order.created_at }}</td>
+                    <td>
+                        <a href="{% url 'restaurant_app:view_order' order.id %}" class="btn btn-info btn-sm">View</a>
+                        <a href="{% url 'restaurant_app:delete_order' order.id %}" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+                
 
         <!-- Tab Content -->
         <div class="tab-content" id="dashboardTabsContent">
@@ -257,6 +305,10 @@
                     <a href="{% url 'restaurant_app:add_grills' %}" class="btn btn-primary me-2">Add Grill</a>
                     <a href="{% url 'restaurant_app:add_sweets' %}" class="btn btn-primary">Add Sweet</a>
                 </div>
+
+
+
+
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped">
                         <thead>

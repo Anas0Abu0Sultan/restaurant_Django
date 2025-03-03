@@ -234,32 +234,29 @@ from django.contrib.contenttypes.models import ContentType
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    status = models.CharField(
+        max_length=20,
+        choices=[('active', 'Active'), ('completed', 'Completed')],
+        default='active',
+    )
 
     def total_items(self):
         return self.cart_items.count()
-    
-    
+
     def __str__(self):
         return f"Cart {self.id} - {self.user if self.user else 'Guest'}"
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, related_name="cart_items", on_delete=models.CASCADE)
-
-    # Generic relation to store any Food type (Drinks, Meals, etc.)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE) #This stores the type of model (e.g., Drinks, Meals, etc.).
     object_id = models.PositiveIntegerField()
     food_item = GenericForeignKey("content_type", "object_id") # This creates a dynamic reference to any food model using content_type and object_id.
-# When accessing cart_item.food_item, Django automatically retrieves the corresponding model instance.For example, if you have a Meal model, accessing cart_item.food_item will return a Meal instance
-
     size = models.CharField(max_length=2, choices=SizePriceMixin.Size.choices, blank=True, null=True)
     quantity = models.PositiveIntegerField(default=1)
     added_at = models.DateTimeField(auto_now_add=True)
 
-    def total_price(self):
-        """Get the correct price by size for Drinks/Salads"""
-        if isinstance(self.food_item, SizePriceMixin):
-            return self.quantity * self.food_item.get_price_by_size(self.size)
-        return self.quantity * self.food_item.price  # For Meals, Sandwiches, etc.
+    
     def clean(self):
         # Ensure food_item exists
         if self.food_item is None:
@@ -268,8 +265,10 @@ class CartItem(models.Model):
     def save(self, *args, **kwargs):
         self.clean()  # Run validation before saving
         super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.quantity}x {self.food_item.name} ({self.size if self.size else 'No Size'})"
 
 #                             <<<<<     CartItem    >>>>>
+
 

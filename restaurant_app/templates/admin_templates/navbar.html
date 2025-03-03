@@ -1,0 +1,66 @@
+{%load static%}
+  <!-- navbar_other.html -->
+
+  <!-- Navbar & Hero Start -->
+  <div class="container-xxl position-relative p-0">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 px-lg-5 py-3 py-lg-0">
+        <a href="" class="navbar-brand p-0">
+            <h1 class="text-primary m-0"><i class="fa fa-utensils me-3"></i>Stars Restoran
+            </h1>
+            <!-- <img src="img/logo.png" alt="Logo"> -->
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="fa fa-bars"></span>
+        </button>
+
+
+
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ms-auto py-0 pe-4">
+                <a href="{% url 'restaurant_app:home' %}" class="nav-item nav-link {{ home|default:'' }}">Home</a>
+                <a href="{% url 'restaurant_app:about' %}" class="nav-item nav-link {{ about|default:'' }}">About</a>
+                <a href="{% url 'restaurant_app:services' %}" class="nav-item nav-link {{ service|default:'' }}">Service</a>
+                <a href="{% url 'restaurant_app:menu' category='food_menu' %}" class="nav-item nav-link {{ menu|default:'' }}">Menu</a>
+                {% comment %} <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                    <div class="dropdown-menu m-0">
+                        <a href="booking.html" class="dropdown-item">Booking</a>
+                        <a href="team.html" class="dropdown-item">Our Team</a>
+                        <a href="testimonial.html" class="dropdown-item">Testimonial</a>
+                    </div>
+                </div> {% endcomment %}
+                <a href="{%url 'restaurant_app:contact'%}" class="nav-item nav-link {{ contact|default:'' }}">Contact</a>
+                {% if request.user.is_staff %}
+                        <a href="{% url 'restaurant_app:dashboard'%}" class="nav-item nav-link {{ Dashboard|default:'' }}">Admin Dashboard</a>
+                        {% endif %}
+            </div>
+            <a href="{% url 'restaurant_app:cart' %}" class="btn btn-primary py-2 px-4">Orders</a>
+            {% if user.is_authenticated %}
+            <form method="post" action="{% url 'accounts:logout' %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="dropdown-item text-danger d-flex align-items-center">
+                    <i class="fas fa-sign-out-alt me-2"></i> Logout
+                </button>
+            </form>
+        {% else %}
+            <a href="{% url 'accounts:login' %}" class="btn btn-primary d-flex align-items-center py-1 px-3">
+                <i class="fas fa-sign-in-alt me-2"></i> Login
+            </a>
+        {% endif %}
+        
+        
+        </div>
+
+
+
+
+    </nav>
+    <div class="container-xxl py-5 bg-dark hero-header mb-5">
+        <div class="container text-center my-5 pt-5 pb-4">
+            <!-- Dynamic Page Title -->
+            <h1 class="display-3 text-white mb-3 animated slideInDown">{{ page_title }}</h1>
+    
+        </div>
+    </div>
+</div>
+<!-- Navbar & Hero End -->

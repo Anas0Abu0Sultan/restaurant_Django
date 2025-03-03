@@ -332,28 +332,6 @@ def booking(request):
 
 from django.contrib.contenttypes.models import ContentType
 
-# @login_required
-# def add_to_cart(request):
-#     if request.method == 'POST':
-#         object_id = request.POST.get('object_id')
-#         content_type = request.POST.get('content_type')
-#         size = request.POST.get('size')
-#         quantity = int(request.POST.get('quantity', 1))
-#         content_type = ContentType.objects.get(model=content_type.lower())
-#         food_item = content_type.get_object_for_this_type(id=object_id)
-#         cart, created = Cart.objects.get_or_create(user=request.user if request.user.is_authenticated else None)
-#         cart_item, created = CartItem.objects.get_or_create(cart=cart,
-#                                                             content_type=content_type,
-#                                                             object_id=object_id,
-#                                                             size=size if size else None)
-#         if not created:
-#             cart_item.quantity += quantity
-#         else:
-#             cart_item.quantity = quantity
-
-#         cart_item.save()
-
-#     return redirect('restaurant_app:cart')            
 
 @login_required
 def add_to_cart(request):
@@ -371,10 +349,13 @@ def add_to_cart(request):
             # Ensure food_item exists
             if food_item is None:
                 print(f"Food item not found for object_id: {object_id} and content_type: {content_type}")
-                return redirect('restaurant_app:menu')  # Redirect to menu or handle error
+                return redirect('restaurant_app:menu', category='Choose-As-You-Love')  # Redirect to menu or handle error
 
-            # Get or create the cart
-            cart, created = Cart.objects.get_or_create(user=request.user if request.user.is_authenticated else None)
+            # Get or create the user's active cart
+            cart, created = Cart.objects.get_or_create(
+                user=request.user,
+                status='active'  # Ensure we only work with active carts
+            )
 
             # Get or create the cart item
             cart_item, created = CartItem.objects.get_or_create(
@@ -394,18 +375,18 @@ def add_to_cart(request):
 
         except ContentType.DoesNotExist:
             print(f"Invalid content_type: {content_type}")
-            return redirect('restaurant_app:menu')  # Redirect to menu or handle error
+            return redirect('restaurant_app:menu', category='Drinks')  # Redirect to menu or handle error
         except Exception as e:
             print(f"Error adding to cart: {e}")
-            return redirect('restaurant_app:menu')  # Redirect to menu or handle error
+            return redirect('restaurant_app:menu', category='Drinks')  # Redirect to menu or handle error
 
     return redirect('restaurant_app:cart')
                                         
 #                                       <<<<<<     Cart    >>>>>
-
 @login_required
 def cart(request):
-    cart = Cart.objects.filter(user=request.user if request.user.is_authenticated else None).first()
+    # Get the user's active cart
+    cart, created = Cart.objects.get_or_create(user=request.user, status='active')
     cart_items = CartItem.objects.filter(cart=cart) if cart else []
     name = request.user.first_name
 
@@ -435,8 +416,14 @@ def cart(request):
 
         # Update total cart price
         total_price += item.total_price
+
+    # Save the total price to the Cart instance
+    if cart:
+        cart.total_price = total_price
+        cart.save()
+
     breadcrumb_section_url = reverse('restaurant_app:menu', kwargs={'category': 'choose_as_you_like'})
-    rest_detail = get_object_or_404(Rest_detail,pk =1)
+    rest_detail = get_object_or_404(Rest_detail, pk=1)
 
     context = {
         'cart': cart,
@@ -445,9 +432,9 @@ def cart(request):
         'page_title': 'Orders',
         'breadcrumb_section': 'Menu',
         'breadcrumb_active': 'Orders',
-        'breadcrumb_section_url':breadcrumb_section_url,
-        'rest_detail':rest_detail,
-        'name':name,
+        'breadcrumb_section_url': breadcrumb_section_url,
+        'rest_detail': rest_detail,
+        'name': name,
     }
 
     return render(request, 'restaurant/cart.html', context)
@@ -475,8 +462,8 @@ def remove_cart_item(request, item_id):
 
 
 
-
-#                                       <<<<<<     Dashboard    >>>>>
+from django.db.models import Sum
+#                                  <<<<<<     Dashboard    >>>>>
 @staff_member_required
 def dashboard(request):
     # Combine all food items from child models
@@ -493,14 +480,72 @@ def dashboard(request):
     contact = get_object_or_404(Contact,id=1)
     # Combine all food items into a single list
     food_items = list(drinks) + list(salads) + list(meals) + list(sandwiches) + list(grills) + list(sweets)
+    
 
     # Statistics
-    total_carts = Cart.objects.count()
+    total_carts = Cart.objects.filter(status='completed').count()
     total_comments = Comment.objects.count()
     total_chefs = Chefs.objects.count()
     total_services = Services.objects.count()
     about_us = AboutUs.objects.first()
     restaurant_details = Rest_detail.objects.first()
+
+
+
+
+    all_carts = Cart.objects.filter(status='completed')
+    
+    total_price_all_carts = 0
+    
+    # Iterate over all carts
+    for cart in all_carts:
+        cart_items = CartItem.objects.filter(cart=cart)
+        
+        # Calculate the total price for the current cart
+        total_price = 0
+        for item in cart_items:
+            if item.food_item is None:
+                continue
+            
+            # Check if the food item has `get_price_by_size` method
+            item.has_price_by_size = hasattr(item.food_item, 'get_price_by_size') and item.size
+
+            # Determine the item price
+            if item.has_price_by_size:
+                item_price = item.food_item.get_price_by_size(item.size)  # Call method inside view
+            else:
+                item_price = item.food_item.price
+
+            # Assign computed price and total price for easy template usage
+            item.item_price = item_price
+            item.total_price = item.quantity * item_price
+
+            # Check category and assign size display
+            if isinstance(item.food_item, (Drinks, Salads)):  
+                item.display_size = item.size if item.size else "N/A"  # Show size if available
+            else:
+                item.display_size = "Standard"  # Default for other categories
+
+            # Update total cart price
+            total_price += item.total_price
+        
+        # Add the total price of the current cart to the total price of all carts
+        total_price_all_carts += total_price
+
+    #     most_sold_items = CartItem.objects.filter(cart__status='completed').values(
+    #     'food_item__name'
+    # ).annotate(
+    #     total_sold=Sum('quantity')
+    # ).order_by('-total_sold')[:10]  # Top 10 most sold items
+
+    # # Total revenue
+    # total_revenue = Cart.objects.filter(status='completed').aggregate(
+    #     total_revenue=Sum('total_price')
+    # )['total_revenue'] or 0
+
+    # All completed orders
+    completed_orders = Cart.objects.filter(status='completed').select_related('user')
+
 
     context = {
         'total_carts': total_carts,
@@ -519,6 +564,10 @@ def dashboard(request):
         'comments':comments,
         'rejected_comments':rejected_comments,
         'contact':contact,
+        'total_price_all_carts':total_price_all_carts,
+        'most_sold_items': 'most_sold_items',
+        'total_revenue': 'total_revenue',
+        'completed_orders': completed_orders,
     }
     return render(request, 'restaurant/dashboard.html', context)
 
@@ -536,10 +585,15 @@ def add_drink(request):
             return redirect('restaurant_app:dashboard')
         else:
             messages.error(request, "There was an error adding the drink.")
-    return render(request, 'restaurant/add_food.html', {'form': form, 'food_type': 'Drink'})
+    restaurant_details = Rest_detail.objects.first()
+    return render(request, 'restaurant/add_food.html', {'form': form,
+                                                         'food_type': 'Drink',
+                                                         'rest_detail':restaurant_details,
+                                                         })
 
 @staff_member_required
 def edit_drink(request, drink_id):
+    restaurant_details = Rest_detail.objects.first()
     drink = get_object_or_404(Drinks, id=drink_id)
     if request.method == 'POST':
         form = DrinkForm(request.POST, request.FILES, instance=drink)
@@ -551,7 +605,7 @@ def edit_drink(request, drink_id):
             messages.error(request, "There was an error updating the drink.")
     else:
         form = DrinkForm(instance=drink)
-    return render(request, 'restaurant/edit_food.html', {'form': form, 'food_type': 'Drink'})
+    return render(request, 'restaurant/edit_food.html', {'form': form, 'food_type': 'Drink','rest_detail':restaurant_details,})
 
 
 @staff_member_required
@@ -566,6 +620,7 @@ def delete_drink(request, drink_id):
 #                                       <<<<<<     Dashboard  Salads     >>>>>
 @staff_member_required
 def add_salad(request):
+    restaurant_details = Rest_detail.objects.first()
     form = SaladForm()
     if request.method == 'POST':
         form = SaladForm(request.POST,request.FILES)
@@ -575,10 +630,11 @@ def add_salad(request):
             return redirect('restaurant_app:dashboard')
         else:
             messages.error(request, "There was an error adding the drink.")
-    return render(request, 'restaurant/add_food.html', {'form': form, 'food_type': 'Salad'})
+    return render(request, 'restaurant/add_food.html', {'form': form, 'food_type': 'Salad','rest_detail':restaurant_details,})
 
 @staff_member_required
 def edit_salad(request, salad_id):
+    restaurant_details = Rest_detail.objects.first()
     salad = get_object_or_404(Salads, id=salad_id)
     if request.method == 'POST':
         form = SaladForm(request.POST, request.FILES, instance=salad)
@@ -590,7 +646,7 @@ def edit_salad(request, salad_id):
             messages.error(request, "There was an error updating the Salad.")
     else:
         form = SaladForm(instance=salad)
-    return render(request, 'restaurant/edit_food.html', {'form': form, 'food_type': 'Salad'})
+    return render(request, 'restaurant/edit_food.html', {'form': form, 'food_type': 'Salad','rest_detail':restaurant_details,})
 
 @staff_member_required
 def delete_salad(request, salad_id):
@@ -603,6 +659,7 @@ def delete_salad(request, salad_id):
 #                                       <<<<<<     Dashboard  Meal     >>>>>
 @staff_member_required
 def add_meal(request):
+    restaurant_details = Rest_detail.objects.first()
     form = MealForm()
     if request.method == 'POST':
         form = MealForm(request.POST,request.FILES)
@@ -612,10 +669,11 @@ def add_meal(request):
             return redirect('restaurant_app:dashboard')
         else:
             messages.error(request, "There was an error adding the Meal.")
-    return render(request, 'restaurant/add_food.html', {'form': form, 'food_type': 'Meal'})
+    return render(request, 'restaurant/add_food.html', {'form': form, 'food_type': 'Meal','rest_detail':restaurant_details,})
 
 @staff_member_required
 def edit_meal(request, meal_id):
+    restaurant_details = Rest_detail.objects.first()
     meal = get_object_or_404(Meals, id=meal_id)
     if request.method == 'POST':
         form = MealForm(request.POST, request.FILES, instance=meal)
@@ -627,7 +685,7 @@ def edit_meal(request, meal_id):
             messages.error(request, "There was an error updating the Meal.")
     else:
         form = MealForm(instance=meal)
-    return render(request, 'restaurant/edit_food.html', {'form': form, 'food_type': 'Meal'})
+    return render(request, 'restaurant/edit_food.html', {'form': form, 'food_type': 'Meal','rest_detail':restaurant_details,})
 
 @staff_member_required
 def delete_meal(request, meal_id):
@@ -641,6 +699,7 @@ def delete_meal(request, meal_id):
 #                                       <<<<<<     Dashboard  Sandwich     >>>>>
 @staff_member_required
 def add_sandwich(request):
+    restaurant_details = Rest_detail.objects.first()
     form = SandwichForm()
     if request.method == 'POST':
         form = SandwichForm(request.POST,request.FILES)
@@ -650,10 +709,11 @@ def add_sandwich(request):
             return redirect('restaurant_app:dashboard')
         else:
             messages.error(request, "There was an error adding the sandwich.")
-    return render(request, 'restaurant/add_food.html', {'form': form, 'food_type': 'Sandwich'})
+    return render(request, 'restaurant/add_food.html', {'form': form, 'food_type': 'Sandwich','rest_detail':restaurant_details,})
 
 @staff_member_required
 def edit_sandwich(request, sandwich_id):
+    restaurant_details = Rest_detail.objects.first()
     sandwich = get_object_or_404(Sandwiches, id=sandwich_id)
     if request.method == 'POST':
         form = SandwichForm(request.POST, request.FILES, instance=sandwich)
@@ -665,7 +725,7 @@ def edit_sandwich(request, sandwich_id):
             messages.error(request, "There was an error updating the sandwich.")
     else:
         form = SandwichForm(instance=sandwich)
-    return render(request, 'restaurant/edit_food.html', {'form': form, 'food_type': 'Sandwich'})
+    return render(request, 'restaurant/edit_food.html', {'form': form, 'food_type': 'Sandwich','rest_detail':restaurant_details,})
 
 
 @staff_member_required
@@ -680,6 +740,7 @@ def delete_sandwich(request, sandwich_id):
 #                                       <<<<<<     Dashboard  Grill     >>>>>
 @staff_member_required
 def add_grill(request):
+    restaurant_details = Rest_detail.objects.first()
     form = GrillForm()
     if request.method == 'POST':
         form = GrillForm(request.POST,request.FILES)
@@ -689,11 +750,12 @@ def add_grill(request):
             return redirect('restaurant_app:dashboard')
         else:
             messages.error(request, "There was an error adding the Grill.")
-    return render(request, 'restaurant/add_food.html', {'form': form, 'food_type': 'Grill'})
+    return render(request, 'restaurant/add_food.html', {'form': form, 'food_type': 'Grill','rest_detail':restaurant_details,})
 
 
 @staff_member_required
 def edit_grill(request, grill_id):
+    restaurant_details = Rest_detail.objects.first()
     grill = get_object_or_404(Grills, id=grill_id)
     if request.method == 'POST':
         form = GrillForm(request.POST, request.FILES, instance=grill)
@@ -705,7 +767,7 @@ def edit_grill(request, grill_id):
             messages.error(request, "There was an error updating the grill.")
     else:
         form = GrillForm(instance=grill)
-    return render(request, 'restaurant/edit_food.html', {'form': form, 'food_type': 'Grill'})
+    return render(request, 'restaurant/edit_food.html', {'form': form, 'food_type': 'Grill','rest_detail':restaurant_details,})
 
 @staff_member_required
 def delete_grill(request, grill_id):
@@ -721,6 +783,7 @@ def delete_grill(request, grill_id):
 
 @staff_member_required
 def add_sweet(request):
+    restaurant_details = Rest_detail.objects.first()
     form = SweetForm()
     if request.method == 'POST':
         form = SweetForm(request.POST,request.FILES)
@@ -730,10 +793,11 @@ def add_sweet(request):
             return redirect('restaurant_app:dashboard')
         else:
             messages.error(request, "There was an error adding the sweet.")
-    return render(request, 'restaurant/add_food.html', {'form': form, 'food_type': 'Sweet'})
+    return render(request, 'restaurant/add_food.html', {'form': form, 'food_type': 'Sweet','rest_detail':restaurant_details,})
 
 @staff_member_required
 def edit_sweet(request, sweet_id):
+    restaurant_details = Rest_detail.objects.first()
     sweet = get_object_or_404(Sweets, id=sweet_id)
     if request.method == 'POST':
         form = SweetForm(request.POST, request.FILES, instance=sweet)
@@ -745,7 +809,7 @@ def edit_sweet(request, sweet_id):
             messages.error(request, "There was an error updating the sweet.")
     else:
         form = SweetForm(instance=sweet)
-    return render(request, 'restaurant/edit_food.html', {'form': form, 'food_type': 'Sweet'})
+    return render(request, 'restaurant/edit_food.html', {'form': form, 'food_type': 'Sweet','rest_detail':restaurant_details,})
 
 @staff_member_required
 def delete_sweet(request, sweet_id):
@@ -760,6 +824,7 @@ def delete_sweet(request, sweet_id):
 
 @staff_member_required
 def add_chef(request):
+    restaurant_details = Rest_detail.objects.first()
     form = ChefForm()
     if request.method == 'POST':
         form = ChefForm(request.POST,request.FILES)
@@ -769,10 +834,11 @@ def add_chef(request):
             return redirect('restaurant_app:dashboard')
         else:
             messages.error(request, "There was an error adding the chef.")
-    return render(request, 'restaurant/chef/add_chef.html', {'form': form})
+    return render(request, 'restaurant/chef/add_chef.html', {'form': form,'rest_detail':restaurant_details,})
 
 @staff_member_required
 def edit_chef(request,chef_id):
+    restaurant_details = Rest_detail.objects.first()
     chef = get_object_or_404(Chefs, id=chef_id)
     if request.method == 'POST':
         form = ChefForm(request.POST, request.FILES, instance=chef)
@@ -783,7 +849,7 @@ def edit_chef(request,chef_id):
         else:
             messages.error(request, "There was an error updating the chef.")
     form = ChefForm(instance=chef)
-    return render(request, 'restaurant/chef/edit_chef.html', {'form': form})
+    return render(request, 'restaurant/chef/edit_chef.html', {'form': form,'rest_detail':restaurant_details,})
 
 @staff_member_required
 def delete_chef(request,chef_id):
@@ -836,6 +902,7 @@ def update_comment_status(request, comment_id, status):
 
 @staff_member_required
 def edit_contact(request, contact_id):
+    restaurant_details = Rest_detail.objects.first()
     contact = get_object_or_404(Contact, id=contact_id)
     if request.method == 'POST':
         form = ContactUsForm(request.POST, instance=contact)
@@ -847,7 +914,7 @@ def edit_contact(request, contact_id):
             messages.error(request, "Error in updateing the contact us.")
     else:
         form = ContactUsForm(instance=contact)
-    return render(request, 'restaurant/edit_contact.html', {'form': form})
+    return render(request, 'restaurant/edit_contact.html', {'form': form,'rest_detail':restaurant_details,})
 
 
 @staff_member_required
@@ -869,4 +936,149 @@ def edit_rest_detail(request):
         # Display the form with the existing Rest_detail data
         form = RestDetailForm(instance=rest_detail)
     
-    return render(request, 'restaurant/edit_rest_detail.html', {'form': form})
+    return render(request, 'restaurant/edit_rest_detail.html', {'form': form,'rest_detail':rest_detail})
+
+
+
+
+
+
+
+
+
+
+
+#                         <<<<< Payment >>>>>>
+
+import stripe
+from django.conf import settings
+from django.shortcuts import redirect
+from django.urls import reverse
+from django.contrib import messages
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+@login_required
+def create_payment(request):
+    cart = Cart.objects.filter(user=request.user).first()
+    if not cart:
+        messages.error(request, 'Your cart is empty')
+        return redirect('restaurant_app:cart')
+
+    # Convert total price to cents (Stripe requires the amount in the smallest currency unit)
+    total_price_cents = int(cart.total_price * 100)
+
+    try:
+        # Create a Stripe Checkout Session
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[
+                {
+                    'price_data': {
+                        'currency': 'usd',
+                        'product_data': {
+                            'name': 'Cart Total',
+                        },
+                        'unit_amount': total_price_cents,
+                    },
+                    'quantity': 1,
+                },
+            ],
+            mode='payment',
+            success_url=request.build_absolute_uri(reverse('restaurant_app:payment_success')),
+            cancel_url=request.build_absolute_uri(reverse('restaurant_app:payment_cancel')),
+        )
+        return redirect(checkout_session.url)  # Redirect to Stripe Checkout
+    except stripe.error.StripeError as e:
+        messages.error(request, f"An error occurred: {str(e)}")
+        return redirect('restaurant_app:cart')
+
+
+
+
+
+
+
+@login_required
+def payment_success(request):
+    rest_detail = Rest_detail.objects.first()
+    cart = Cart.objects.filter(user=request.user, status='active').first()
+    if not cart:
+        messages.error(request, "No active cart found.")
+        return redirect('restaurant_app:cart')
+
+    # Mark the cart as completed
+    cart.status = 'completed'
+    cart.save()
+
+    messages.success(request, "Payment successful! Your order has been placed.")
+    return render(request, 'restaurant/payment_success.html',context={'rest_detail':rest_detail})
+
+
+
+
+
+@login_required
+def payment_cancel(request):
+    return render(request, 'payment_cancel.html')
+
+
+
+
+
+
+
+
+
+@staff_member_required
+def view_order(request, order_id):
+    rest_detail = Rest_detail.objects.first()
+    order = get_object_or_404(Cart, id=order_id, status='completed')
+    cart_items = CartItem.objects.filter(cart=order)
+    name = request.user.first_name
+
+    # Calculate the total price for all items in the cart
+    total_price = 0
+    for item in cart_items:
+        if item.food_item is None:
+            continue
+        # Check if the food item has `get_price_by_size` method
+        item.has_price_by_size = hasattr(item.food_item, 'get_price_by_size') and item.size
+
+        # Determine the item price
+        if item.has_price_by_size:
+            item_price = item.food_item.get_price_by_size(item.size)  # Call method inside view
+        else:
+            item_price = item.food_item.price
+
+        # Assign computed price and total price for easy template usage
+        item.item_price = item_price
+        item.total_price = item.quantity * item_price
+
+        # Check category and assign size display
+        if isinstance(item.food_item, (Drinks, Salads)):  
+            item.display_size = item.size if item.size else "N/A"  # Show size if available
+        else:
+            item.display_size = "Standard"  # Default for other categories
+
+        # Update total cart price
+        total_price += item.total_price
+        context={
+        'total_price':total_price,
+        'order': order,
+        'cart_items': cart_items,
+        'total_price': total_price,
+        'page_title': 'Order',
+        'breadcrumb_section': 'Menu',
+        'breadcrumb_active': 'Orders',
+        # 'breadcrumb_section_url': breadcrumb_section_url,
+        'rest_detail': rest_detail,
+        }
+    return render(request, 'restaurant/view_order.html', context)
+
+
+@staff_member_required
+def delete_order(request, order_id):
+    order = get_object_or_404(Cart, id=order_id, status='completed')
+    order.delete()
+    messages.success(request, "Order deleted successfully.")
+    return redirect('restaurant_app:dashboard')
