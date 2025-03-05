@@ -15,6 +15,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from .forms import DrinkForm, SaladForm, MealForm, SandwichForm, GrillForm, SweetForm,ChefForm,CommentForm,ContactUsForm,RestDetailForm
+from django.http import JsonResponse
 
 #                                       <<<<<<     test    >>>>>
 def test(request):
@@ -333,7 +334,24 @@ def booking(request):
 from django.contrib.contenttypes.models import ContentType
 
 
+from django.http import JsonResponse
+
+
 @login_required
+def get_cart_item_count(request):
+    if request.user.is_authenticated:
+        cart = Cart.objects.filter(user=request.user, status='active').first()
+        if cart:
+            count = cart.cart_items.count()  # Use the correct related name
+        else:
+            count = 0
+        return JsonResponse({'count': count})
+    return JsonResponse({'count': 0})
+
+
+
+
+@login_required(login_url='accounts:login')
 def add_to_cart(request):
     if request.method == 'POST':
         object_id = request.POST.get('object_id')
@@ -348,8 +366,7 @@ def add_to_cart(request):
 
             # Ensure food_item exists
             if food_item is None:
-                print(f"Food item not found for object_id: {object_id} and content_type: {content_type}")
-                return redirect('restaurant_app:menu', category='Choose-As-You-Love')  # Redirect to menu or handle error
+                return JsonResponse({'success': False, 'message': 'Food item not found.'})
 
             # Get or create the user's active cart
             cart, created = Cart.objects.get_or_create(
@@ -373,14 +390,14 @@ def add_to_cart(request):
 
             cart_item.save()
 
-        except ContentType.DoesNotExist:
-            print(f"Invalid content_type: {content_type}")
-            return redirect('restaurant_app:menu', category='Drinks')  # Redirect to menu or handle error
-        except Exception as e:
-            print(f"Error adding to cart: {e}")
-            return redirect('restaurant_app:menu', category='Drinks')  # Redirect to menu or handle error
+            return JsonResponse({'success': True, 'message': f'The {food_item.name} has been added to your cart successfully!'})
 
-    return redirect('restaurant_app:cart')
+        except ContentType.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Invalid content type.'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Error adding to cart: {str(e)}'})
+
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
                                         
 #                                       <<<<<<     Cart    >>>>>
 @login_required
@@ -544,7 +561,8 @@ def dashboard(request):
     # )['total_revenue'] or 0
 
     # All completed orders
-    completed_orders = Cart.objects.filter(status='completed').select_related('user')
+    completed_orders = Cart.objects.filter(status='completed').select_related('user').order_by('-created_at')
+
 
 
     context = {

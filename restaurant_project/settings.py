@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     # 'allauth.socialaccount',
     # 'allauth.socialaccount.providers.google',
     'widget_tweaks',
+    'booking.apps.BookingConfig',
 ]
 
 # SOCIALACCOUNT_PROVIDERS = {
