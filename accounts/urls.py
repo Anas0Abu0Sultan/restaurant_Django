@@ -9,4 +9,7 @@ urlpatterns = [
     path('login/', views.CustomLoginView.as_view(), name='login'),
     path('register/', views.RegisterView.as_view(), name='register'),
     path('logout/', LogoutView.as_view(next_page=reverse_lazy('accounts:login')), name='logout'),
+
+    path('check-auth/', views.check_auth, name='check_auth'),
+
 ]

@@ -18,6 +18,53 @@
 
     <!-- Animate.css for wow animations -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+    <style>
+        /* Custom CSS for the toast */
+.toast {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.toast-header {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.toast-body {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    font-size: 16px;
+    color: #333;
+}
+
+/* Animation for the toast */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.toast.show {
+    animation: slideIn 0.5s ease-out;
+}
+
+.toast.hide {
+    animation: fadeOut 0.5s ease-out;
+}
+    </style>
 </head>
 <body>
     <!-- jQuery -->
@@ -32,6 +79,10 @@
         // Initialize wow.js
         new WOW().init();
     </script>
+    <!-- Bootstrap CSS -->
+
+<!-- Bootstrap JS (with Popper.js) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Menu Start -->
 <div class="container-xxl py-5">
     <div class="container">
@@ -39,7 +90,20 @@
             <h5 class="section-title ff-secondary text-center text-primary fw-normal">Food Menu</h5>
             <h1 class="mb-5">{{ name_page|default:"Most Popular Items" }}</h1>
         </div>
-
+<!-- Add this to your HTML template -->
+<div aria-live="polite" aria-atomic="true" class="position-relative">
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
+            <div class="toast-header bg-success text-white">
+                <strong class="me-auto">Success</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body bg-light">
+                <span id="toastMessage">The item has been added to your cart successfully!</span>
+            </div>
+        </div>
+    </div>
+</div>
         <!-- Tab Navigation -->
         <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.1s">
             <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5">
@@ -201,6 +265,25 @@
         const foodTypeInput = document.getElementById('foodType');
         const sizeField = document.getElementById('sizeField');
         const sizeSelect = document.getElementById('size');
+        const addToCartForm = document.getElementById('addToCartForm');
+        const successToast = new bootstrap.Toast(document.getElementById('successToast'));
+        const toastMessage = document.getElementById('toastMessage');
+        const cartItemCount = document.getElementById('cartItemCount'); // Cart item count badge
+    
+        // Function to update the cart item count
+        function updateCartItemCount() {
+            fetch("{% url 'restaurant_app:get_cart_item_count' %}")
+                .then(response => response.json())
+                .then(data => {
+                    cartItemCount.textContent = data.count; // Update the badge count
+                })
+                .catch(error => {
+                    console.error('Error fetching cart item count:', error);
+                });
+        }
+    
+        // Update the cart item count on page load
+        updateCartItemCount();
     
         addToCartButtons.forEach(button => {
             button.addEventListener('click', function () {
@@ -221,6 +304,67 @@
     
                 addToCartModal.show();
             });
+        });
+    
+        addToCartForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+    
+            // Check if the user is authenticated
+            fetch("{% url 'accounts:check_auth' %}")  // Add a view to check authentication
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.authenticated) {
+                        // Show a message to guests
+                        const confirmLogin = confirm('Please log in to add items to your cart. Redirect to login page?');
+                        if (confirmLogin) {
+                            window.location.href = "{% url 'accounts:login' %}";  // Redirect to login page
+                        }
+                        return; // Stop further execution
+                    }
+    
+                    // If authenticated, proceed with adding to cart
+                    const formData = new FormData(addToCartForm);
+    
+                    fetch(addToCartForm.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+                        },
+                    })
+                    .then(response => {
+                        if (response.redirected) {
+                            // Handle redirect (e.g., to login page)
+                            window.location.href = response.url;
+                        } else {
+                            return response.json();
+                        }
+                    })
+                    .then(data => {
+                        if (data && data.success) {
+                            // Close the modal
+                            addToCartModal.hide();
+    
+                            // Update the toast message
+                            toastMessage.textContent = data.message;
+    
+                            // Show the toast
+                            successToast.show();
+    
+                            // Update the cart item count
+                            updateCartItemCount();
+                        } else if (data) {
+                            alert(data.message); // Show an error message
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while adding the item to the cart.');
+                    });
+                })
+                .catch(error => {
+                    console.error('Error checking authentication:', error);
+                });
         });
     });
 </script>
