@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     # 'allauth.socialaccount',
     # 'allauth.socialaccount.providers.google',
     'widget_tweaks',
-    'booking.apps.BookingConfig',
+    # 'booking.apps.BookingConfig',
 ]
 
 # SOCIALACCOUNT_PROVIDERS = {
@@ -188,3 +188,5 @@ SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 STRIPE_PUBLISHABLE_KEY = 'pk_test_51NRFa9I9ebQOzwPpIXsiQ5mG66AFFc9PFJDwN356ve2VWYmSCQyeSA0bDTA6HiOIpmCeNSMbjl3uucBBrG8rL34u00whRH0BzP'
 STRIPE_SECRET_KEY = 'sk_test_51NRFa9I9ebQOzwPpEdE5l6tsH4GrFX1lD1NBoPnkJ3CAlZQJsRgm9S97J9FJe7247UR8oSXw2zIoGvSFlSSSr5yB00tYwTyivq'
+
+

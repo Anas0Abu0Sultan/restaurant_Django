@@ -4,7 +4,20 @@
 <div class="container text-center mt-5">
     <h1 class="mb-4 display-4" style="font-family: 'Comic Sans MS', cursive, sans-serif; color: #ff6f61;">🎉 Payment Successful! 🎉</h1>
     <p class="lead" style="font-family: 'Comic Sans MS', cursive, sans-serif; color: #4a4a4a;">Thank you for your order. Your payment was successful. 😊</p>
-    <a href="{% url 'restaurant_app:menu' 'd' %}" class="btn btn-primary btn-lg mt-3" style="background-color: #ff6f61; border-color: #ff6f61; font-family: 'Comic Sans MS', cursive, sans-serif;">
+    
+    <!-- Highlight the Secret Number -->
+    <div class="secret-number-container mt-4 p-3" style="background-color: #fff3e0; border-radius: 10px; display: inline-block;">
+        <p class="mb-1" style="font-family: 'Comic Sans MS', cursive, sans-serif; color: #4a4a4a; font-size: 18px;">Your Secret Number:</p>
+        <p class="secret-number" style="font-family: 'Comic Sans MS', cursive, sans-serif; font-size: 36px; font-weight: bold; color: #ff6f61; margin: 0;">
+            {{ cart.secret_number }}
+        </p>
+        <p class="mt-2" style="font-family: 'Comic Sans MS', cursive, sans-serif; color: #4a4a4a; font-size: 14px;">
+            The delivery person will ask you for this number. Keep it safe! 🔒
+        </p>
+    </div>
+<p></p>
+    <!-- Back to Menu Button -->
+    <a href="{% url 'restaurant_app:menu' 'd' %}" class="btn btn-primary btn-lg mt-4" style="background-color: #ff6f61; border-color: #ff6f61; font-family: 'Comic Sans MS', cursive, sans-serif;">
         🍔 Back to Menu 🍕
     </a>
 </div>
@@ -32,6 +45,33 @@
         border-color: #ff8a80 !important;
         transform: scale(1.1);
         transition: all 0.3s ease;
+    }
+
+    /* Secret Number Animation */
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.1);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    .secret-number {
+        animation: pulse 2s infinite;
+    }
+
+    .secret-number-container {
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .secret-number-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
     }
 </style>
 {% endblock %}

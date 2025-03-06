@@ -14,7 +14,7 @@ from random import shuffle
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
-from .forms import DrinkForm, SaladForm, MealForm, SandwichForm, GrillForm, SweetForm,ChefForm,CommentForm,ContactUsForm,RestDetailForm
+from .forms import DrinkForm, SaladForm, MealForm, SandwichForm, GrillForm, SweetForm,ChefForm,CommentForm,ContactUsForm,RestDetailForm,UserInfoForm
 from django.http import JsonResponse
 
 #                                       <<<<<<     test    >>>>>
@@ -442,6 +442,18 @@ def cart(request):
     breadcrumb_section_url = reverse('restaurant_app:menu', kwargs={'category': 'choose_as_you_like'})
     rest_detail = get_object_or_404(Rest_detail, pk=1)
 
+    # Handle the form submission
+    form = UserInfoForm()
+    if request.method == 'POST':
+        form = UserInfoForm(request.POST)
+        if form.is_valid():
+            # Save the user's information to the active cart
+            cart.street = form.cleaned_data['street']
+            cart.phone = form.cleaned_data['phone']
+            cart.state = form.cleaned_data['state']
+            cart.save()
+            return redirect('restaurant_app:create_payment')  # Redirect to the cart page after saving
+
     context = {
         'cart': cart,
         'cart_items': cart_items,
@@ -452,6 +464,7 @@ def cart(request):
         'breadcrumb_section_url': breadcrumb_section_url,
         'rest_detail': rest_detail,
         'name': name,
+        'form': form,
     }
 
     return render(request, 'restaurant/cart.html', context)
@@ -1027,9 +1040,9 @@ def payment_success(request):
     # Mark the cart as completed
     cart.status = 'completed'
     cart.save()
-
+    
     messages.success(request, "Payment successful! Your order has been placed.")
-    return render(request, 'restaurant/payment_success.html',context={'rest_detail':rest_detail})
+    return render(request, 'restaurant/payment_success.html',context={'rest_detail':rest_detail,'cart':cart})
 
 
 

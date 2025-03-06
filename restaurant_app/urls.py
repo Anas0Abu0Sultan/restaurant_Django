@@ -69,6 +69,8 @@ urlpatterns = [
     path('view_order/<int:order_id>/', views.view_order, name='view_order'),
     path('delete_order/<int:order_id>/', views.delete_order, name='delete_order'),
     path('get-cart-item-count/', views.get_cart_item_count, name='get_cart_item_count'),
+    
+
 ]
 
 

@@ -20,6 +20,20 @@
         background-color: #0056b3;
         border-color: #0056b3;
     }
+
+    .delivery-details {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .secret-number {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #28a745;
+        margin-top: 10px;
+    }
 </style>
 <div class="container mt-4">
     <div class="card shadow">
@@ -39,6 +53,29 @@
                 </div>
             </div>
 
+            <!-- Delivery Details -->
+            <div class="delivery-details">
+                <h3 class="mb-3">Delivery Information</h3>
+                <div class="row">
+                    <div class="col-md-4">
+                        <p><strong>State:</strong> {{ order.state }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>Street:</strong> {{ order.street }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>Phone:</strong> {{ order.phone }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <p class="secret-number">
+                            <strong>Secret Number:</strong> {{ order.secret_number }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             <!-- Items Table -->
             <h3 class="mb-3">Items</h3>
             <div class="table-responsive">
@@ -46,7 +83,7 @@
                     <thead class="thead-light">
                         <tr>
                             <th>Item</th>
-                            <th>Size</th> <!-- New column for size -->
+                            <th>Size</th>
                             <th>Quantity</th>
                             <th>Price</th>
                             <th>Total</th>
@@ -56,7 +93,7 @@
                         {% for item in cart_items %}
                         <tr>
                             <td>{{ item.food_item.name }}</td>
-                            <td>{{ item.display_size }}</td> <!-- Display size -->
+                            <td>{{ item.display_size }}</td>
                             <td>{{ item.quantity }}</td>
                             <td>${{ item.item_price }}</td>
                             <td>${{ item.total_price }}</td>

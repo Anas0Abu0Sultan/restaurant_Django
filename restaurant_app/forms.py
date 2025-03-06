@@ -160,3 +160,35 @@ class RestDetailForm(forms.ModelForm):
         if len(description2) > 1500:
             raise ValidationError("Description 2 cannot exceed 1500 characters.")
         return description2
+    
+
+from django.core.validators import RegexValidator
+
+class UserInfoForm(forms.Form):
+    street = forms.CharField(
+        max_length=255,
+        required=True,
+        error_messages={
+            'required': 'Please enter your street address.',
+        }
+    )
+    phone = forms.CharField(
+        max_length=15,
+        required=True,
+        validators=[
+            RegexValidator(
+                regex=r'^\+?1?\d{9,15}$',
+                message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."
+            )
+        ],
+        error_messages={
+            'required': 'Please enter your phone number.',
+        }
+    )
+    state = forms.CharField(
+        max_length=100,
+        required=True,
+        error_messages={
+            'required': 'Please enter your state here.',
+        }
+    )
