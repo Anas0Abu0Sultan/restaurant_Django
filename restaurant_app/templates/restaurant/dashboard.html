@@ -215,14 +215,25 @@
                 <h2>Total Sales</h2>
                 <p>${{ total_price_all_carts }}</p>
             </div>
+
             <div class="stat">
                 <h2>Total Items Sold</h2>
-                <p>{{ total_items_sold }}</p>
+                <p>{{ Total_Items_Sold }}</p>
             </div>
+
+
             <div class="stat">
                 <h2>Most Popular Food</h2>
-                <p>{{ popular_food.food_item__name }} ({{ popular_food.total_sold }} sold)</p>
+                {% if Most_Popular_Food %}
+                    <p>{{ Most_Popular_Food.name }}</p> <!-- Replace 'name' with the actual field for the food item's name -->
+                {% else %}
+                    <p>No popular food item found.</p>
+                {% endif %}
             </div>
+            
+            
+
+
         </div>
 
 <!-- Tab Navigation -->
