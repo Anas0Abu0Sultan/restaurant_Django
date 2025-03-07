@@ -1,5 +1,5 @@
 from django import forms
-from .models import Drinks, Salads, Meals, Sandwiches, Grills, Sweets,Chefs,Comment,Contact,Rest_detail
+from .models import Drinks, Salads, Meals, Sandwiches, Grills, Sweets,Chefs,Comment,Contact,Rest_detail,Services
 from django.core.exceptions import ValidationError
 
 class ContactForm(forms.Form):
@@ -160,3 +160,55 @@ class RestDetailForm(forms.ModelForm):
         if len(description2) > 1500:
             raise ValidationError("Description 2 cannot exceed 1500 characters.")
         return description2
+    
+
+from django.core.validators import RegexValidator
+
+class UserInfoForm(forms.Form):
+    street = forms.CharField(
+        max_length=255,
+        required=True,
+        error_messages={
+            'required': 'Please enter your street address.',
+        }
+    )
+    phone = forms.CharField(
+        max_length=15,
+        required=True,
+        validators=[
+            RegexValidator(
+                regex=r'^\+?1?\d{9,15}$',
+                message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."
+            )
+        ],
+        error_messages={
+            'required': 'Please enter your phone number.',
+        }
+    )
+    state = forms.CharField(
+        max_length=100,
+        required=True,
+        error_messages={
+            'required': 'Please enter your state here.',
+        }
+    )
+
+class ServiceForm(forms.ModelForm):
+    class Meta:
+        model = Services
+        fields = ['name', 'description', 'text_icon']
+
+
+
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+        if len(name) > 50:
+            raise ValidationError("Name cannot exceed 50 characters.")
+        return name
+    
+    def clean_description(self):
+        description = self.cleaned_data.get('description')
+        if len(description) > 2500:
+            raise ValidationError("Description cannot exceed 2500 characters.")
+        return description
+    

@@ -3,7 +3,7 @@ from PIL import Image
 import os
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-
+import random
 
 #                             <<<<<     FOOD    >>>>>
 
@@ -208,6 +208,8 @@ class Rest_detail(models.Model):
     image = models.ImageField(upload_to='restaurant/',default='defa/defa.png')
     description1 = models.CharField(max_length=255,default='Enjoy OurDelicious Meal')
     description2 = models.CharField(max_length=1500,default='Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit. Aliqu diam amet diam et eos. Clita erat ipsum et lorem et sit, sed stet lorem sit clita duo justo magna dolore erat amet')
+    video_url = models.URLField(default='https://www.youtube.com/watch?v=LXNdRCjZt00&t=19s')
+    background_image_url = models.ImageField(upload_to='restaurant/backgrounds/', default='defa/background.png')
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -230,16 +232,25 @@ class Rest_detail(models.Model):
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
-
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    state = models.CharField(max_length=100, blank=True,null=True)
+    street = models.CharField(max_length=255, blank=True,null=True)
+    phone = models.CharField(max_length=15, blank=True,null=True)
+    secret_number = models.IntegerField()
     status = models.CharField(
         max_length=20,
         choices=[('active', 'Active'), ('completed', 'Completed')],
         default='active',
     )
+    def save(self, *args, **kwargs):
+        if not self.secret_number:  # Generate only if not set
+            self.secret_number = random.randint(1000, 9999)  # 4-digit number
+        super().save(*args, **kwargs)
+
 
     def total_items(self):
         return self.cart_items.count()

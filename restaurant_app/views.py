@@ -7,15 +7,19 @@ import random
 from django.urls import reverse
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
-from .forms import ContactForm
+from .forms import ContactForm, ServiceForm
 from django.contrib import messages
 from itertools import chain
 from random import shuffle
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
-from .forms import DrinkForm, SaladForm, MealForm, SandwichForm, GrillForm, SweetForm,ChefForm,CommentForm,ContactUsForm,RestDetailForm
+from .forms import DrinkForm, SaladForm, MealForm, SandwichForm, GrillForm, SweetForm,ChefForm,CommentForm,ContactUsForm,RestDetailForm,UserInfoForm
 from django.http import JsonResponse
+from django.utils.decorators import method_decorator
+from django.contrib import messages
+from django.views.generic import DeleteView
+from django.urls import reverse_lazy
 
 #                                       <<<<<<     test    >>>>>
 def test(request):
@@ -134,10 +138,45 @@ def service(request):
     return render(request,'restaurant/services.html',context)
 
 
+@staff_member_required
+def add_service(request):
+    if request.method == 'POST':
+        form = ServiceForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Service added successfully!')  # Success message
+            return redirect('restaurant_app:dashboard')  # Redirect to dashboard
+        else:
+            messages.error(request, 'Failed to add service. Please check the form.')  # Error message
+    else:
+        form = ServiceForm()
+    return render(request, 'restaurant/services/add_service.html', {'form': form})
 
 
 
+@staff_member_required
+def edit_service(request, service_id):
+    service = get_object_or_404(Services, id=service_id)
+    if request.method == 'POST':
+        form = ServiceForm(request.POST, instance=service)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Service updated successfully!')  # Success message
+            return redirect('restaurant_app:dashboard')  # Redirect to services list
+        else:
+            messages.error(request, 'Failed to update service. Please check the form.')  # Error message
+    else:
+        form = ServiceForm(instance=service)
+    return render(request, 'restaurant/services/edit_service.html', {'form': form, 'service': service})
 
+
+
+@staff_member_required
+def delete_service(request, service_id):
+    service = get_object_or_404(Services, id=service_id)
+    service.delete()
+    messages.success(request, "Service deleted successfully!")
+    return redirect('restaurant_app:dashboard')
 #                                       <<<<<<     Menu    >>>>>
 
 def menu(request, category):
@@ -442,6 +481,18 @@ def cart(request):
     breadcrumb_section_url = reverse('restaurant_app:menu', kwargs={'category': 'choose_as_you_like'})
     rest_detail = get_object_or_404(Rest_detail, pk=1)
 
+    # Handle the form submission
+    form = UserInfoForm()
+    if request.method == 'POST':
+        form = UserInfoForm(request.POST)
+        if form.is_valid():
+            # Save the user's information to the active cart
+            cart.street = form.cleaned_data['street']
+            cart.phone = form.cleaned_data['phone']
+            cart.state = form.cleaned_data['state']
+            cart.save()
+            return redirect('restaurant_app:create_payment')  # Redirect to the cart page after saving
+
     context = {
         'cart': cart,
         'cart_items': cart_items,
@@ -452,6 +503,7 @@ def cart(request):
         'breadcrumb_section_url': breadcrumb_section_url,
         'rest_detail': rest_detail,
         'name': name,
+        'form': form,
     }
 
     return render(request, 'restaurant/cart.html', context)
@@ -479,11 +531,14 @@ def remove_cart_item(request, item_id):
 
 
 
-from django.db.models import Sum
+from django.db.models import Sum,Count
+from django.contrib.contenttypes.models import ContentType
+
 #                                  <<<<<<     Dashboard    >>>>>
 @staff_member_required
 def dashboard(request):
     # Combine all food items from child models
+    services = Services.objects.all()
     drinks = Drinks.objects.all()
     salads = Salads.objects.all()
     meals = Meals.objects.all()
@@ -511,6 +566,23 @@ def dashboard(request):
 
 
     all_carts = Cart.objects.filter(status='completed')
+    Total_Items_Sold = CartItem.objects.filter(cart__in=all_carts).aggregate(total_items_sold=Sum('quantity'))['total_items_sold']
+    # Find the most popular food item
+    most_popular_food = (
+    CartItem.objects.filter(cart__in=all_carts)
+    .values('content_type', 'object_id')
+    .annotate(total_sold=Count('id'))
+    .order_by('-total_sold')
+    .first()
+    )
+    if most_popular_food:
+     content_type = ContentType.objects.get_for_id(most_popular_food['content_type'])
+     Most_Popular_Food = content_type.get_object_for_this_type(id=most_popular_food['object_id'])
+    else:
+     Most_Popular_Food = None
+
+
+
     
     total_price_all_carts = 0
     
@@ -549,16 +621,7 @@ def dashboard(request):
         # Add the total price of the current cart to the total price of all carts
         total_price_all_carts += total_price
 
-    #     most_sold_items = CartItem.objects.filter(cart__status='completed').values(
-    #     'food_item__name'
-    # ).annotate(
-    #     total_sold=Sum('quantity')
-    # ).order_by('-total_sold')[:10]  # Top 10 most sold items
-
-    # # Total revenue
-    # total_revenue = Cart.objects.filter(status='completed').aggregate(
-    #     total_revenue=Sum('total_price')
-    # )['total_revenue'] or 0
+ 
 
     # All completed orders
     completed_orders = Cart.objects.filter(status='completed').select_related('user').order_by('-created_at')
@@ -586,6 +649,9 @@ def dashboard(request):
         'most_sold_items': 'most_sold_items',
         'total_revenue': 'total_revenue',
         'completed_orders': completed_orders,
+        'services':services,
+        'Total_Items_Sold':Total_Items_Sold,
+        'Most_Popular_Food':Most_Popular_Food,
     }
     return render(request, 'restaurant/dashboard.html', context)
 
@@ -1027,9 +1093,9 @@ def payment_success(request):
     # Mark the cart as completed
     cart.status = 'completed'
     cart.save()
-
+    
     messages.success(request, "Payment successful! Your order has been placed.")
-    return render(request, 'restaurant/payment_success.html',context={'rest_detail':rest_detail})
+    return render(request, 'restaurant/payment_success.html',context={'rest_detail':rest_detail,'cart':cart})
 
 
 
