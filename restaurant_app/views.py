@@ -7,7 +7,7 @@ import random
 from django.urls import reverse
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
-from .forms import ContactForm
+from .forms import ContactForm, ServiceForm
 from django.contrib import messages
 from itertools import chain
 from random import shuffle
@@ -16,6 +16,10 @@ from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from .forms import DrinkForm, SaladForm, MealForm, SandwichForm, GrillForm, SweetForm,ChefForm,CommentForm,ContactUsForm,RestDetailForm,UserInfoForm
 from django.http import JsonResponse
+from django.utils.decorators import method_decorator
+from django.contrib import messages
+from django.views.generic import DeleteView
+from django.urls import reverse_lazy
 
 #                                       <<<<<<     test    >>>>>
 def test(request):
@@ -134,10 +138,45 @@ def service(request):
     return render(request,'restaurant/services.html',context)
 
 
+@staff_member_required
+def add_service(request):
+    if request.method == 'POST':
+        form = ServiceForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Service added successfully!')  # Success message
+            return redirect('restaurant_app:dashboard')  # Redirect to dashboard
+        else:
+            messages.error(request, 'Failed to add service. Please check the form.')  # Error message
+    else:
+        form = ServiceForm()
+    return render(request, 'restaurant/services/add_service.html', {'form': form})
 
 
 
+@staff_member_required
+def edit_service(request, service_id):
+    service = get_object_or_404(Services, id=service_id)
+    if request.method == 'POST':
+        form = ServiceForm(request.POST, instance=service)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Service updated successfully!')  # Success message
+            return redirect('restaurant_app:dashboard')  # Redirect to services list
+        else:
+            messages.error(request, 'Failed to update service. Please check the form.')  # Error message
+    else:
+        form = ServiceForm(instance=service)
+    return render(request, 'restaurant/services/edit_service.html', {'form': form, 'service': service})
 
+
+
+@staff_member_required
+def delete_service(request, service_id):
+    service = get_object_or_404(Services, id=service_id)
+    service.delete()
+    messages.success(request, "Service deleted successfully!")
+    return redirect('restaurant_app:dashboard')
 #                                       <<<<<<     Menu    >>>>>
 
 def menu(request, category):
@@ -497,6 +536,7 @@ from django.db.models import Sum
 @staff_member_required
 def dashboard(request):
     # Combine all food items from child models
+    services = Services.objects.all()
     drinks = Drinks.objects.all()
     salads = Salads.objects.all()
     meals = Meals.objects.all()
@@ -599,6 +639,7 @@ def dashboard(request):
         'most_sold_items': 'most_sold_items',
         'total_revenue': 'total_revenue',
         'completed_orders': completed_orders,
+        'services':services,
     }
     return render(request, 'restaurant/dashboard.html', context)
 

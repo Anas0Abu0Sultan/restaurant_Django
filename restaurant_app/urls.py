@@ -71,6 +71,10 @@ urlpatterns = [
     path('get-cart-item-count/', views.get_cart_item_count, name='get_cart_item_count'),
     
 
+    path('services/add/', views.add_service, name='add_service'),
+    path('services/edit/<int:service_id>/', views.edit_service, name='edit_service'),
+    path('services/delete/<int:service_id>/', views.delete_service, name='delete_service'),
+
 ]
 
 

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Drinks, Salads, Meals, Sandwiches, Grills, Sweets,Chefs,Comment,Contact,Rest_detail
+from .models import Drinks, Salads, Meals, Sandwiches, Grills, Sweets,Chefs,Comment,Contact,Rest_detail,Services
 from django.core.exceptions import ValidationError
 
 class ContactForm(forms.Form):
@@ -192,3 +192,23 @@ class UserInfoForm(forms.Form):
             'required': 'Please enter your state here.',
         }
     )
+
+class ServiceForm(forms.ModelForm):
+    class Meta:
+        model = Services
+        fields = ['name', 'description', 'text_icon']
+
+
+
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+        if len(name) > 50:
+            raise ValidationError("Name cannot exceed 50 characters.")
+        return name
+    
+    def clean_description(self):
+        description = self.cleaned_data.get('description')
+        if len(description) > 2500:
+            raise ValidationError("Description cannot exceed 2500 characters.")
+        return description
+    

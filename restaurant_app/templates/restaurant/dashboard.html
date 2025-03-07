@@ -246,6 +246,10 @@
     <li class="nav-item" role="presentation">
         <button class="nav-link" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button" role="tab" aria-controls="orders" aria-selected="false">Orders</button>
     </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="services-tab" data-bs-toggle="tab" data-bs-target="#services" type="button" role="tab" aria-controls="services" aria-selected="false">Services</button>
+    </li>
+    
 </ul>
 
 <!-- Tab Content -->
@@ -469,6 +473,65 @@
                     </table>
                 </div>
             </div>
+
+
+
+
+
+
+
+
+
+
+<!-- Services Tab -->
+<div class="tab-pane fade" id="services" role="tabpanel" aria-labelledby="services-tab">
+    <h2 class="mt-4">Services</h2>
+    <div class="mb-4">
+        <a href="{% url 'restaurant_app:add_service' %}" class="btn btn-primary">Add Service</a>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Service Name</th>
+                    <th>Description</th>
+                    <th>icon</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for service in services %}
+                <tr>
+                    <td>{{ service.name }}</td>
+                    <td>{{ service.description|truncatechars:50 }}</td>
+                    <td>                            <i class="{{ service.text_icon }}"></i>
+                    </td>
+                    <td>
+                        <a href="{% url 'restaurant_app:edit_service' service.id %}" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="{% url 'restaurant_app:delete_service' service.id %}" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">No services available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
 <!-- About Us Tab -->
 <div class="tab-pane fade" id="about" role="tabpanel" aria-labelledby="about-tab">
     <h2 style="text-align: center;">Restaurant Information</h2>
