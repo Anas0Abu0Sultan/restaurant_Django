@@ -1,104 +1,102 @@
-{%load static%}
-  <!-- navbar .html -->
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Navbar</title>
-      <!-- Bootstrap CSS -->
-      <!-- Font Awesome CSS -->
-  </head>
-  <body>
-        <div class="container-xxl position-relative p-0">
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 px-lg-5 py-3 py-lg-0">
-                <a href="" class="navbar-brand p-0">
-                    <h1 class="text-primary m-0"><i class="fa fa-utensils me-3"></i>Stars Restoran</h1>
-                    {% comment %} <img src="{{rest_detail.image.url}}" alt="Logo" style="width: 150px; height: 150px;"> {% endcomment %}
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                    <span class="fa fa-bars"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarCollapse">
-                    <div class="navbar-nav ms-auto py-0 pe-4">
-                        <a href="{% url 'restaurant_app:home' %}" class="nav-item nav-link active">Home</a>
-                        <a href="{% url 'restaurant_app:about' %}" class="nav-item nav-link">About</a>
-                        <a href="{% url 'restaurant_app:services' %}" class="nav-item nav-link">Service</a>
-                        <a href="{% url 'restaurant_app:menu' category='food_menu' %}" class="nav-item nav-link {{ menu|default:'' }}">Menu</a>
-                        <a href="{% url 'restaurant_app:contact' %}" class="nav-item nav-link {{ contact|default:'' }}">Contact</a>
-                        {% if request.user.is_staff %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar</title>
+    <!-- Bootstrap CSS -->
+    <!-- Font Awesome CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="container-xxl position-relative p-0">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 px-lg-5 py-3 py-lg-0">
+            <a href="" class="navbar-brand p-0 d-flex align-items-center">
+                <!-- Logo -->
+                <img src="{{ rest_detail.image.url }}" alt="Logo" class="img-fluid" style="max-height: 80px;">                <!-- Restaurant Name -->
+                <h1 class="text-primary m-0"><i class="fa fa-utensils me-3"></i>Star Restoran</h1>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="fa fa-bars"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <div class="navbar-nav ms-auto py-0 pe-4">
+                    <a href="{% url 'restaurant_app:home' %}" class="nav-item nav-link active">Home</a>
+                    <a href="{% url 'restaurant_app:about' %}" class="nav-item nav-link">About</a>
+                    <a href="{% url 'restaurant_app:services' %}" class="nav-item nav-link">Service</a>
+                    <a href="{% url 'restaurant_app:menu' category='food_menu' %}" class="nav-item nav-link {{ menu|default:'' }}">Menu</a>
+                    <a href="{% url 'restaurant_app:contact' %}" class="nav-item nav-link {{ contact|default:'' }}">Contact</a>
+                    {% if request.user.is_staff %}
                         <a href="{% url 'restaurant_app:dashboard' %}" class="nav-item nav-link {{ Dashboard|default:'' }}">Admin Dashboard</a>
-                        {% endif %}
-                    </div>
-                
-                    <!-- Wrap the cart and logout/login buttons in a flex container -->
-                    <div class="d-flex align-items-center gap-3">
-                        <!-- Cart Icon -->
-                        <a href="{% url 'restaurant_app:cart' %}" class="btn btn-primary py-2 px-4 position-relative">
-                            <i class="fas fa-shopping-cart"></i>
-                            <span id="cartItemCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                {{ request.user.cart.cart_items.count|default:0 }}
-                            </span>
-                        </a>
-                
-                        <!-- Logout/Login Button -->
-                        {% if user.is_authenticated %}
+                    {% endif %}
+                </div>
+
+                <!-- Cart and Auth Buttons -->
+                <div class="d-flex align-items-center gap-3">
+                    <!-- Cart Icon -->
+                    <a href="{% url 'restaurant_app:cart' %}" class="btn btn-primary py-2 px-4 position-relative">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span id="cartItemCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            {{ request.user.cart.cart_items.count|default:0 }}
+                        </span>
+                    </a>
+
+                    <!-- Logout/Login Button -->
+                    {% if user.is_authenticated %}
                         <form method="post" action="{% url 'accounts:logout' %}" class="d-inline">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger d-flex align-items-center py-2 px-4">
                                 <i class="fas fa-sign-out-alt me-2"></i> Logout
                             </button>
                         </form>
-                        {% else %}
+                    {% else %}
                         <a href="{% url 'accounts:login' %}" class="btn btn-primary d-flex align-items-center py-2 px-4">
                             <i class="fas fa-sign-in-alt me-2"></i> Login
                         </a>
-                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <div class="container-xxl py-5 bg-dark hero-header mb-5">
+            <div class="container my-5 py-5">
+                <div class="row align-items-center g-5">
+                    <div class="col-lg-6 text-center text-lg-start">
+                        <h1 class="display-3 text-white animated slideInLeft">{{ rest_detail.description1 }}</h1>
+                        <p class="text-white animated slideInLeft mb-4 pb-2">{{ rest_detail.description2 }}</p>
+                        <a href="{% url 'restaurant_app:menu' 'chosse as you love' %}" class="btn btn-primary btn-lg mt-4" style="background-color: red; border-color: yellow; color: yellow; font-family: 'Comic Sans MS', cursive, sans-serif;">
+                            🍔 Go to Menu 🥤
+                        </a>
                     </div>
-                </div>
-                
-                </div>
-            </nav>
-
-            <div class="container-xxl py-5 bg-dark hero-header mb-5">
-                <img src="{{rest_detail.image.url}}" alt="Logo" style="width: 180px; height: 180px;">
-
-                <div class="container my-5 py-5">
-                    <div class="row align-items-center g-5">
-                        <div class="col-lg-6 text-center text-lg-start">
-                            {% comment %} <img src="{{rest_detail.image.url}}" alt="Logo" style="width: 150px; height: 150px;"> {% endcomment %}
-
-                            {% comment %} <h1 class="display-3 text-white animated slideInLeft">Enjoy Our<br>Delicious Meal</h1> {% endcomment %}
-                            <h1 class="display-3 text-white animated slideInLeft">{{rest_detail.description1}}</h1>
-                            <p class="text-white animated slideInLeft mb-4 pb-2"> {{rest_detail.description2}}</p>
-                            <a href="" class="btn btn-primary py-sm-3 px-sm-5 me-3 animated slideInLeft">Book A Table</a>
-                        </div>
-                        <div class="col-lg-6 text-center text-lg-end overflow-hidden">
-                            <img class="img-fluid" src="{% static 'img/hero.png'%}" alt="">
-                        </div>
+                    <div class="col-lg-6 text-center text-lg-end overflow-hidden">
+                        <img class="img-fluid" src="{% static 'img/hero.png' %}" alt="Hero Image">
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Navbar & Hero End -->
+    </div>
+    <!-- Navbar & Hero End -->
 
-<!-- Bootstrap JS Bundle -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Fetch the cart item count when the page loads
-        fetch("{% url 'restaurant_app:get_cart_item_count' %}")
-            .then(response => response.json())
-            .then(data => {
-                const cartItemCount = document.getElementById('cartItemCount');
-                if (cartItemCount) {
-                    cartItemCount.textContent = data.count; // Update the badge count
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching cart item count:', error);
-            });
-    });
-</script>
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Fetch the cart item count when the page loads
+            fetch("{% url 'restaurant_app:get_cart_item_count' %}")
+                .then(response => response.json())
+                .then(data => {
+                    const cartItemCount = document.getElementById('cartItemCount');
+                    if (cartItemCount) {
+                        cartItemCount.textContent = data.count; // Update the badge count
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching cart item count:', error);
+                });
+        });
+    </script>
 </body>
 </html>

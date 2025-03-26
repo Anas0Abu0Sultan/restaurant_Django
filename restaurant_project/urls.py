@@ -23,7 +23,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('stars/restaurant/',include('restaurant_app.urls')),
+    path('',include('restaurant_app.urls')),
     path('social-auth/', include('social_django.urls', namespace='social')),
     path('accounts/',include('accounts.urls')),
     # path('stars/restaurant/booking/',include('booking.urls')),
