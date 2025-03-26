@@ -210,6 +210,7 @@ class Rest_detail(models.Model):
     description2 = models.CharField(max_length=1500,default='Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit. Aliqu diam amet diam et eos. Clita erat ipsum et lorem et sit, sed stet lorem sit clita duo justo magna dolore erat amet')
     video_url = models.URLField(default='https://www.youtube.com/watch?v=LXNdRCjZt00&t=19s')
     background_image_url = models.ImageField(upload_to='restaurant/backgrounds/', default='defa/background.png')
+    backend_url = models.URLField(default='https://anasabusultan.pythonanywhere.com/Anas-Abu-Sultan/')
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

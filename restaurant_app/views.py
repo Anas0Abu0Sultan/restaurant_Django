@@ -1043,7 +1043,7 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 @login_required
 def create_payment(request):
-    cart = Cart.objects.filter(user=request.user).first()
+    cart = Cart.objects.filter(user=request.user, status='active').first()
     if not cart:
         messages.error(request, 'Your cart is empty')
         return redirect('restaurant_app:cart')
