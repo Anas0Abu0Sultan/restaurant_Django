@@ -191,7 +191,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = config('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 SOCIAL_AUTH_LOGIN_ERROR_URL = '/accounts/login/'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'restaurant_app:home'
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
-
+SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = 'https://star-restaurant.onrender.com/social-auth/complete/google-oauth2/'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 STRIPE_PUBLISHABLE_KEY = config('STRIPE_PUBLISHABLE_KEY')
