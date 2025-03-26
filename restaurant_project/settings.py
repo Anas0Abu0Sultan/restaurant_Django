@@ -17,6 +17,7 @@ from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -29,10 +30,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost',
                  '127.0.0.1:8000',
-                 'Star-Restaurant.com',
-                 'www.Star-Restaurant.com',
-                 'star-restaurant.onrender.com',
-                 'www.star-restaurant.onrender.com'
+                  '127.0.0.1',
                  ]
 
 
@@ -191,7 +189,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = config('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 SOCIAL_AUTH_LOGIN_ERROR_URL = '/accounts/login/'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'restaurant_app:home'
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
-SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = 'https://star-restaurant.onrender.com/social-auth/complete/google-oauth2/'
+
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 STRIPE_PUBLISHABLE_KEY = config('STRIPE_PUBLISHABLE_KEY')
