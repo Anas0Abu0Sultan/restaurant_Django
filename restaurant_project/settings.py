@@ -17,6 +17,7 @@ from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -24,23 +25,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['localhost',
-                 '127.0.0.1',
-                 '127.0.0.1:8000',
-                 'Star-Restaurant.com',
-                 'www.Star-Restaurant.com',
-                 'star-restaurant.onrender.com',
-                 'www.star-restaurant.onrender.com'
-                 ]
-
-CSRF_TRUSTED_ORIGINS = [
-    'https://star-restaurant.onrender.com',
-    'https://www.star-restaurant.onrender.com',
-    'http://localhost:8000',
-    'http://127.0.0.1:8000'
+ALLOWED_HOSTS = [
+        "127.0.0.1",
+        "localhost",
 ]
+
 
 # Application definition
 SITE_ID = 1 
@@ -197,20 +188,10 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = config('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 SOCIAL_AUTH_LOGIN_ERROR_URL = '/accounts/login/'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'restaurant_app:home'
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
-SOCIAL_AUTH_GOOGLE_OAUTH2_REDIRECT_URI = 'https://star-restaurant.onrender.com/social-auth/complete/google-oauth2/'
+
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 STRIPE_PUBLISHABLE_KEY = config('STRIPE_PUBLISHABLE_KEY')
 STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
 
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://star-restaurant.onrender.com',
-    'https://www.star-restaurant.onrender.com'
-]
-
-# Required for HTTPS on Render
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SOCIAL_AUTH_REDIRECT_IS_HTTPS = True
