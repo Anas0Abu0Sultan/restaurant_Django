@@ -35,7 +35,10 @@ ALLOWED_HOSTS = ['localhost',
                  'www.star-restaurant.onrender.com',
                  ]
 
-
+CSRF_TRUSTED_ORIGINS = [
+    'https://star-restaurant.onrender.com',  # Add your domain here
+    # You can add more domains if needed
+]
 # Application definition
 SITE_ID = 1 
 
