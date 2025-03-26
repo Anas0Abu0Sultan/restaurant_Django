@@ -26,7 +26,13 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1:8000','Star-Restaurant.com','www.Star-Restaurant.com']
+ALLOWED_HOSTS = ['localhost',
+                 '127.0.0.1:8000',
+                 'Star-Restaurant.com',
+                 'www.Star-Restaurant.com',
+                 'star-restaurant.onrender.com',
+                 'www.star-restaurant.onrender.com'
+                 ]
 
 
 # Application definition
