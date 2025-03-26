@@ -24,9 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['localhost',
+                 '127.0.0.1',
                  '127.0.0.1:8000',
                  'Star-Restaurant.com',
                  'www.Star-Restaurant.com',
@@ -197,3 +198,13 @@ STRIPE_PUBLISHABLE_KEY = config('STRIPE_PUBLISHABLE_KEY')
 STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
 
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://star-restaurant.onrender.com',
+    'https://www.star-restaurant.onrender.com'
+]
+
+# Required for HTTPS on Render
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SOCIAL_AUTH_REDIRECT_IS_HTTPS = True
