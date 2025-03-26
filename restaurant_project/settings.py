@@ -12,15 +12,16 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from decouple import config
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-fb9aqn1s)jjrds*9(1fazjfefbii6x8n_&0r8@71cs64h@0%65'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -169,8 +170,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'anas227sultan@gmail.com'  # Your email address
-EMAIL_HOST_PASSWORD = 'nedx uhat jela sgju'     # Your email password or app password
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')  # Your email address
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')     # Your email password or app password
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -178,15 +179,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Social Auth settings
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '426123218672-7h1sftlhpkvqa4b4dad0mitecacb9m13.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = config('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = config('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 SOCIAL_AUTH_LOGIN_ERROR_URL = '/accounts/login/'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'restaurant_app:home'
 SOCIAL_AUTH_RAISE_EXCEPTIONS = False
 
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-STRIPE_PUBLISHABLE_KEY = 'pk_test_51NRFa9I9ebQOzwPpIXsiQ5mG66AFFc9PFJDwN356ve2VWYmSCQyeSA0bDTA6HiOIpmCeNSMbjl3uucBBrG8rL34u00whRH0BzP'
-STRIPE_SECRET_KEY = 'sk_test_51NRFa9I9ebQOzwPpEdE5l6tsH4GrFX1lD1NBoPnkJ3CAlZQJsRgm9S97J9FJe7247UR8oSXw2zIoGvSFlSSSr5yB00tYwTyivq'
+STRIPE_PUBLISHABLE_KEY = config('STRIPE_PUBLISHABLE_KEY')
+STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
 
 
